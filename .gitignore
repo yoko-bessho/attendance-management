@@ -1,0 +1,25 @@
+# Composer / Laravel
+/vendor/
+/node_modules/
+
+# Laravel storage & cache
+/public/storage
+/storage/*.key
+.phpunit.result.cache
+
+# Environment files
+.env
+.env.backup
+
+# Docker関連
+docker/mysql/data/
+docker-compose.override.yml
+
+# IDE / Editor
+/.vscode
+/.idea
+
+# Logs / build
+npm-debug.log
+yarn-error.log
+/public/build
