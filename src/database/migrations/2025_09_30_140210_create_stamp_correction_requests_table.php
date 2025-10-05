@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStampCorrectionRequestTable extends Migration
+class CreateStampCorrectionRequestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateStampCorrectionRequestTable extends Migration
      */
     public function up()
     {
-        Schema::create('stamp_correction_request', function (Blueprint $table) {
+        Schema::create('stamp_correction_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attendance_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -33,6 +33,6 @@ class CreateStampCorrectionRequestTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stamp_correction_request');
+        Schema::dropIfExists('stamp_correction_requests');
     }
 }
