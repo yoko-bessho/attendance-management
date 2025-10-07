@@ -20,5 +20,5 @@ Route::get('/email/verify', function () {
 })->middleware('auth')->name('verification.notice');
 
 Route::middleware(['auth','verified'])->group(function () {
-    Route::get('/', [UserController::class, 'index']);
+    Route::get('/attendance', [UserController::class, 'index'])->name('attendance');
 });
