@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AttendanceController;
+use App\Models\Attendance;
 use Illuminate\Support\Facades\Route;
 
 
@@ -20,5 +22,6 @@ Route::get('/email/verify', function () {
 })->middleware('auth')->name('verification.notice');
 
 Route::middleware(['auth','verified'])->group(function () {
-    Route::get('/attendance', [UserController::class, 'index'])->name('attendance');
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+    Route::post('work-in', [AttendanceController::class, 'workIn'])->name('work-in');
 });
