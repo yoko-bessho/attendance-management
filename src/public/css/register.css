@@ -104,8 +104,8 @@
 .confirm-retry button {
     margin-top: 50px;
     border: none;
-    background-color: #fff;
     color: #0073cc;
+    background-color: #f5f5f5;
     font-size: 20px;
 }
 

@@ -10,7 +10,7 @@
     @yield('css')
 </head>
 
-<body>
+<body class="body">
     <header class="header">
         <div class="header__inner">
             <div class="header-utilities">
@@ -24,7 +24,7 @@
         </div>
     </header>
 
-    <main class="main">
+    <main>
         @yield('content')
     </main>
 </body>
