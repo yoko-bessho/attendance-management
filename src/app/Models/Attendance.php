@@ -29,7 +29,6 @@ class Attendance extends Model
 
     public function breakTimes()
     {
-
         return $this->hasMany(BreakTime::class);
     }
 
@@ -41,39 +40,47 @@ class Attendance extends Model
 
     public static function getUserStatus($user)
     {
-        $today = Carbon::today();
-        $attendance = self::where('user_id', $user->id)
-                            ->whereDate('worked_at', $today)
-                            ->latest()
-                            ->first();
-
+        // デフォルト値（勤務外）
         $statusLabel = [
             'work_in' => true,
             'work_out' => false,
             'break_start' => false,
             'break_end' => false,
-            'work_finished' => false,
+            'message' => false,
         ];
+        // まず「まだ終わっていない最新の勤務」を探す
+        $attendance = self::where('user_id', $user->id)
+                            ->whereDate('worked_at', Carbon::today())
+                            ->whereNull('end_time')
+                            ->latest()
+                            ->first();
+
+        // なければ「今日の最新の勤務」を探す（退勤済みの場合）
+        if (!$attendance) {
+            $attendance = self::where('user_id', $user->id)
+                                ->whereDate('worked_at', Carbon::today())
+                                ->latest()
+                                ->first();
+        }
 
         if ($attendance) {
             $statusLabel['work_in'] = false;
 
             if (is_null($attendance->end_time)) {
-                $statusLabel['work_out'] = true;
-
-                $latestBreak = BreakTime::where('attendance_id', $attendance->id)
-                                        ->latest()
-                                        ->first();
-
+                // --- 勤務中 or 休憩中 ---
+                $latestBreak = $attendance->breakTimes()->latest()->first();
                 if ($latestBreak && is_null($latestBreak->end_time)) {
                     $statusLabel['break_end'] = true;
                 } else {
+                    $statusLabel['work_out'] = true;
                     $statusLabel['break_start'] = true;
                 }
             } else {
-                $statusLabel['work_finished'] = true;
+                // --- 退勤済み ---
+                $statusLabel['message'] = true;
             }
         }
+        
         return $statusLabel;
     }
 }

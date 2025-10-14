@@ -16,11 +16,17 @@
     <div class="attendance__status">
         @if($statusLabel['work_in'])
             <span>勤務外</span>
-        @elseif($statusLabel['work_out'] || ['break_start'] ['break_end'])
-            <span>勤務中</span>
-        @elseif($statusLabel['break_end'])
+        @endif
+
+        @if($statusLabel['work_out'])
+            <span>出勤中</span>
+        @endif
+
+        @if($statusLabel['break_end'])
             <span>休憩中</span>
-        @else
+        @endif
+
+        @if($statusLabel['message'])
             <span>退勤済</span>
         @endif
     </div>
@@ -38,25 +44,35 @@
             @csrf
                 <button class="attendance__button-submit" type="submit">出勤</button>
             </form>
-            @elseif($statusLabel['work_out'] || ['break_start'])
-            <form class="attendance__button">
+            @endif
+
+            @if($statusLabel['work_out'])
+            <form class="attendance__button" action="/work-out" method="POST">
             @csrf
                 <button class="attendance__button-submit" type="submit">退勤</button>
             </form>
-            <form class="attendance__button" action="">
+            @endif
+
+            @if($statusLabel['break_start'])
+            <form class="attendance__button" action="/break-start" method="POST">
             @csrf
                 <button class="break__button-submit" type="submit">休憩入</button>
             </form>
-            @elseif($statusLabel['break_end'])
-            <form class="attendance__button">
+            @endif
+
+            @if($statusLabel['break_end'])
+            <form class="attendance__button" action="/break-end" method="POST">
             @csrf
                 <button class="break__button-submit" type="submit">休憩戻</button>
             </form>
-            @else
-            <p>お疲れ様でした。</p>
+            @endif
+
+            @if($statusLabel['message'])
+            <span class="finished-message">お疲れ様でした</span>
             @endif
         </div>
     </div>
 </div>
 @endsection
+
 

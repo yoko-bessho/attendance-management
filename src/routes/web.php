@@ -24,4 +24,7 @@ Route::get('/email/verify', function () {
 Route::middleware(['auth','verified'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
     Route::post('work-in', [AttendanceController::class, 'workIn'])->name('work-in');
+    Route::post('work-out', [AttendanceController::class, 'workOut'])->name('work-out');
+    Route::post('break-start', [AttendanceController::class, 'breakStart'])->name('break-start');
+    Route::post('break-end', [AttendanceController::class, 'breakEnd'])->name('break-end');
 });
