@@ -38,9 +38,46 @@ class Attendance extends Model
     }
 
 
+    public function getTotalBreakSecondsAttribute()
+    {
+        $totalBreakSeconds = 0;
+        foreach ($this->breakTimes as $break) {
+            if ($break->start_time && $break->end_time) {
+                $start = \Carbon\Carbon::parse($break->start_time);
+                $end = \Carbon\Carbon::parse($break->end_time);
+                $totalBreakSeconds += $start->diffInSeconds($end);
+            }
+        }
+        return $totalBreakSeconds;
+    }
+
+    public function getFormattedBreakTimeAttribute()
+    {
+        return gmdate('G:i', $this->total_break_seconds);
+    }
+
+    public function getFormattedWorkTimeAttribute()
+    {
+        if (!$this->start_time || !$this->end_time) {
+            return '0:00';
+        }
+
+        $start = \Carbon\Carbon::parse($this->start_time);
+        $end = \Carbon\Carbon::parse($this->end_time);
+
+        $totalWorkSeconds = $start->diffInSeconds($end);
+        $actualWorkSeconds = $totalWorkSeconds - $this->total_break_seconds;
+        
+        if ($totalWorkSeconds < 0) {
+            $actualWorkSeconds = 0;
+        }
+
+        return gmdate('G:i', $actualWorkSeconds);
+    }
+
+
     public static function getUserStatus($user)
     {
-        // デフォルト値（勤務外）
         $statusLabel = [
             'work_in' => true,
             'work_out' => false,
@@ -48,14 +85,13 @@ class Attendance extends Model
             'break_end' => false,
             'message' => false,
         ];
-        // まず「まだ終わっていない最新の勤務」を探す
+
         $attendance = self::where('user_id', $user->id)
                             ->whereDate('worked_at', Carbon::today())
                             ->whereNull('end_time')
                             ->latest()
                             ->first();
 
-        // なければ「今日の最新の勤務」を探す（退勤済みの場合）
         if (!$attendance) {
             $attendance = self::where('user_id', $user->id)
                                 ->whereDate('worked_at', Carbon::today())
@@ -67,7 +103,6 @@ class Attendance extends Model
             $statusLabel['work_in'] = false;
 
             if (is_null($attendance->end_time)) {
-                // --- 勤務中 or 休憩中 ---
                 $latestBreak = $attendance->breakTimes()->latest()->first();
                 if ($latestBreak && is_null($latestBreak->end_time)) {
                     $statusLabel['break_end'] = true;
@@ -76,7 +111,6 @@ class Attendance extends Model
                     $statusLabel['break_start'] = true;
                 }
             } else {
-                // --- 退勤済み ---
                 $statusLabel['message'] = true;
             }
         }

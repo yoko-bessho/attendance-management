@@ -21,6 +21,7 @@ class AttendanceController extends Controller
         return view('index', compact('now', 'weekdays', 'statusLabel'));
     }
 
+
     public function workIn()
     {
         $user = Auth::user();
@@ -39,6 +40,7 @@ class AttendanceController extends Controller
         return redirect()->route('attendance');
     }
 
+
     public function workOut()
     {
         $user = Auth::user();
@@ -56,6 +58,7 @@ class AttendanceController extends Controller
 
         return redirect()->route('attendance');
     }
+
 
     public function breakStart()
     {
@@ -83,6 +86,7 @@ class AttendanceController extends Controller
         return redirect()->route('attendance');
     }
 
+
     public function breakEnd()
     {
         $user = Auth::user();
@@ -107,5 +111,37 @@ class AttendanceController extends Controller
             ]);
         }
         return redirect()->route('attendance');
+    }
+
+
+    public function attendanceList(Request $request)
+    {
+        $month = $request->input('month')
+            ? Carbon::parse($request->input('month'))
+            : Carbon::now();
+
+        $startOfMonth = $month->copy()->startOfMonth();
+        $endOfMonth = $month->copy()->endOfMonth();
+
+        $attendances = Attendance::where('user_id', Auth::id())
+            ->whereBetween('worked_at', [$startOfMonth, $endOfMonth])
+            ->with('breakTimes')
+            ->get();
+
+        $dates = collect();
+        for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
+            $dates->push($date->copy());
+        }
+
+        $attendanceMap = $attendances->keyBy(function ($attendance) {
+            return Carbon::parse($attendance->worked_at)->format('Y-m-d');
+        });
+
+        $previousMonth = $month->copy()->subMonth();
+        $nextMonth = $month->copy()->addMonth();
+
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+
+        return view('attendance-list', compact('month', 'previousMonth', 'nextMonth', 'dates', 'attendanceMap', 'weekdays'));
     }
 }
