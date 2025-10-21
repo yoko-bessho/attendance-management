@@ -45,7 +45,9 @@
                     <td>{{ optional($currentAttendance)->end_time ? \Carbon\Carbon::parse($currentAttendance->end_time)->format('H:i') : '' }}</td>
                     <td>{{ optional($currentAttendance)->formatted_break_time }}</td>
                     <td>{{ optional($currentAttendance)->formatted_work_time }}</td>
-                    <td><a class="attendance-detail" href="#">詳細</a></td>
+                    <td>
+                        <a class="attendance-detail__button" href="{{ route('attendance.detail', ['date' => $date->format('Y-m-d')]) }}">詳細</a>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

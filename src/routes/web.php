@@ -27,5 +27,6 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::post('work-out', [AttendanceController::class, 'workOut'])->name('work-out');
     Route::post('break-start', [AttendanceController::class, 'breakStart'])->name('break-start');
     Route::post('break-end', [AttendanceController::class, 'breakEnd'])->name('break-end');
-    Route::get('/attendance/list', [AttendanceController::class, 'attendanceList'])->name('attendance.list');
+    Route::get('attendance/list', [AttendanceController::class, 'attendanceList'])->name('attendance.list');
+    Route::get('/attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
 });

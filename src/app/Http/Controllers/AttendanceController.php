@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\BreakTime;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -143,5 +144,15 @@ class AttendanceController extends Controller
         $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
         return view('attendance-list', compact('month', 'previousMonth', 'nextMonth', 'dates', 'attendanceMap', 'weekdays'));
+    }
+
+    public function attendanceDetail($date)
+    {
+        $attendance = Attendance::with('user', 'breakTimes')
+            ->where('user_id', Auth::id())
+            ->whereDate('worked_at', $date)
+            ->first();
+
+        return view('attendance-detail', compact('attendance', 'date'));
     }
 }
