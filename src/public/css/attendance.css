@@ -176,11 +176,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     opacity: 0;
 }
 
-
 .textarea {
     width: 70%;
     height: 80px;
     font-size: 18px;
     padding: 10px;
     border: solid 1px #e1e1e1;
+}
+
+.pending-notice {
+    text-align: right;
+    margin-bottom: 20px;
+    color: red;
 }

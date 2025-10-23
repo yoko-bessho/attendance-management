@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Enums\StampCorrectionRequestsStatus;
+use App\Http\Requests\AttendanceCorrectionRequest;
+use App\Models\StampCorrectionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
@@ -153,6 +157,14 @@ class AttendanceController extends Controller
             ->whereDate('worked_at', $date)
             ->first();
 
-        return view('attendance-detail', compact('attendance', 'date'));
+        $pendingRequest = StampCorrectionRequest::where('user_id', Auth::id())
+            ->where('request_date', $date)
+            ->where('status', StampCorrectionRequestsStatus::PENDING)
+            ->first();
+
+        return view('attendance-detail', compact('attendance', 'date', 'pendingRequest'));
     }
+
 }
+
+

@@ -17,10 +17,11 @@ class CreateStampCorrectionRequestsTable extends Migration
             $table->id();
             $table->foreignId('attendance_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('type', 20);
+            $table->date('request_date')->index();
             $table->string('reason');
-            $table->dateTime('revised_start_time');
-            $table->dateTime('revised_end_time');
+            $table->dateTime('revised_start_time')->nullable();
+            $table->dateTime('revised_end_time')->nullable();
+            $table->json('revised_breaks')->nullable();
             $table->string('status', 20)->default('pending');
             $table->timestamps();
         });

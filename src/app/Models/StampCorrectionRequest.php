@@ -25,4 +25,16 @@ class StampCorrectionRequest extends Model
     {
         return $this->belongsTo(BreakTime::class);
     }
+
+
+    protected $fillable = [
+        'attendance_id',
+        'user_id',
+        'request_date',
+        'reason',
+        'revised_start_time',
+        'revised_end_time',
+        'revised_breaks',
+        'status',
+    ];
 }
