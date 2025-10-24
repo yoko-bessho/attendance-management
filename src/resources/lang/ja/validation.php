@@ -150,5 +150,10 @@ return [
         'name' => 'お名前',
         'email' => 'メールアドレス',
         'password' => 'パスワード',
+        'start_time' => '出勤時間',
+        'end_time' => '退勤時間',
+        'breaks' => '休憩時間',
+        'breaks.*.start_time' => '休憩開始時間',
+        'breaks.*.end_time' => '休憩終了時間',
     ],
 ];

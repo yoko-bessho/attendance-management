@@ -8,10 +8,11 @@ use App\Models\Attendance;
 use App\Models\StampCorrectionRequest;
 use Carbon\Carbon;
 use App\Enums\StampCorrectionRequestsStatus;
+use App\Http\Requests\AttendanceCorrectionRequest;
 
 class StampCorrectionRequestController extends Controller
 {
-        public function requestCorrection(Request $request, $date)
+        public function requestCorrection(AttendanceCorrectionRequest $request, $date)
     {
         $attendance = Attendance::where('user_id', Auth::id())
             ->whereDate('worked_at', $date)

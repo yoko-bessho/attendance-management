@@ -20,7 +20,6 @@
         $isPending = (bool) $pendingRequest;
         $disabled = $isPending ? 'disabled' : '';
 
-        // 表示するデータを決定
         if ($isPending) {
             $displayStartTime = $pendingRequest->revised_start_time;
             $displayEndTime = $pendingRequest->revised_end_time;
@@ -33,6 +32,16 @@
             $displayBreaks = optional($attendance)->breakTimes ?? [];
         }
     @endphp
+    @if ($errors->any())
+        <div class="alert alert-danger" style="color: red;">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form class="attendance-detail-form" action="{{ route('attendance.request', ['date' => $date]) }}" method="POST">
         @csrf
         <table class="attendance-detail-table">
