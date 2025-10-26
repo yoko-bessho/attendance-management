@@ -31,4 +31,5 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::get('attendance/list', [AttendanceController::class, 'attendanceList'])->name('attendance.list');
     Route::get('/attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::post('/attendance/detail/{date}', [StampCorrectionRequestController::class, 'requestCorrection'])->name('attendance.request')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+    Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'requestList'])->name('request.list');
 });

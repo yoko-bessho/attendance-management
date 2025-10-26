@@ -26,7 +26,7 @@
             <a class="header-nav__link" href="{{ route('attendance.list') }}">勤怠一覧</a>
         </li>
         <li class="header-nav__item">
-            <a class="header-nav__link" href="">申請</a>
+            <a class="header-nav__link" href="{{ route('request.list') }}">申請</a>
         </li>
         <li class="header-nav__item">
             <form class="form" action="/logout" method="POST">

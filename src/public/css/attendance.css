@@ -1,5 +1,6 @@
 .attendance__container,
-.attendance-detail__container {
+.attendance-detail__container,
+.request-list__container {
     margin: 0 auto;
     height: 100vh;
     background-color: #f5f5f5;
@@ -9,6 +10,19 @@
 
 .attendance-detail__container {
     width: 80%;
+}
+
+.request-list__container {
+    margin-top: 80px;
+}
+
+@media (max-width: 1240px) {
+    .attendance__container,
+    .attendance-detail__container,
+    .request-list__container {
+        padding: 0 5%;
+        width: 90%;
+    }
 }
 
 .attendance__header {
@@ -67,7 +81,8 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     left:20px;
 }
 
-.attendance-table {
+.attendance-table,
+.request-table {
     table-layout: fixed;
     width: 100%;
     border-collapse: separate;
@@ -76,11 +91,36 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     color: #737373;
 }
 
+.attendance-table thead tr:first-child th:first-child,
+.attendance-detail-table tr:first-child th:first-child,
+.request-table thead tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.attendance-table thead tr:first-child th:last-child,
+.attendance-detail-table tr:first-child td:last-child,
+.request-table thead tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.attendance-table tbody tr:last-child td:last-child,
+.attendance-detail-table tr:last-child td,
+.request-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.attendance-table tbody tr:last-child td:first-child,
+.attendance-detail-table tr:last-child th,
+.request-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
 .attendance-table__row,
-.attendance-detail-table__row {
+.attendance-detail-table__row,
+.request-table__row {
+    text-align: center;
     background-color: #fff;
     height: 42px;
-    font:#e1e1e1 18px;
 }
 
 .attendance-table__row td {
@@ -89,7 +129,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     font-size: 18px;
 }
 
-.attendance-table__row:first-child {
+.attendance-detail-table:first-child {
     width: 200px;
 }
 
@@ -137,8 +177,6 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     color:#000;
 }
 
-
-
 .form-action {
     text-align: right;
     margin-top: 10px;
@@ -163,8 +201,6 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     text-align: center;
 }
 
-
-
 input[type="time"] {
     position: relative;
 }
@@ -188,4 +224,24 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     text-align: right;
     margin-bottom: 20px;
     color: red;
+}
+
+.tab-header {
+    display: flex;
+    border-bottom: 1px solid #000;
+    margin-top: 40px;
+    padding-bottom: 14px;
+    margin: 50px 0;
+}
+
+.tab-link {
+    text-decoration: none;
+    font-size: 20px;
+    color: #737373;
+    padding-left: 100px;
+}
+
+.tab-link.active {
+    color: #000;
+    font-weight: bold;
 }

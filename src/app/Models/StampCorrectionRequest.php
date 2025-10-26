@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Attendance;
+use App\Enums\StampCorrectionRequestsStatus;
 
 class StampCorrectionRequest extends Model
 {
@@ -36,5 +37,9 @@ class StampCorrectionRequest extends Model
         'revised_end_time',
         'revised_breaks',
         'status',
+    ];
+
+    protected $casts = [
+        'status' => StampCorrectionRequestsStatus::class,
     ];
 }

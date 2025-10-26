@@ -40,4 +40,21 @@ class StampCorrectionRequestController extends Controller
         return redirect()->route('attendance.list')->with('success', '修正申請を送信しました。');
     }
 
+    public function requestList(Request $request)
+    {
+        $tab = $request->query('tab', 'pending');
+        $status = StampCorrectionRequestsStatus::fromTab($tab);
+
+        $user = Auth::user();
+        $requests = StampCorrectionRequest::where('user_id', $user->id)
+            ->whereDate('request_date', '<=', Carbon::today())
+            ->whereDate('created_at', '>=', Carbon::now()->subMonth())
+            ->where('status', $status)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('request-list', compact('requests', 'tab'));
+    }
+
 }
+

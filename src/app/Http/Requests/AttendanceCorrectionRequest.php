@@ -71,8 +71,9 @@ class AttendanceCorrectionRequest extends FormRequest
         return [
             'reason.required' => '備考を記入してください',
             'end_time.after_or_equal' => '出勤時間もしくは退勤時間が不適切な値です',
-            'breaks.*.end_time.after_or_equal' => '休憩終了時間は休憩開始時間以降の時間を指定してください。',
+            'breaks.*.end_time.before_or_equal' => '休憩時間もしくは退勤時間が不適切な値です',
             'breaks.*.start_time.before_or_equal' => '休憩時間もしくは退勤時間が不適切な値です',
+            'breaks.*.start_time.after_or_equal' => '休憩時間が不適切な値です',
         ];
     }
 }
