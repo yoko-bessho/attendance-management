@@ -37,4 +37,13 @@ class LoginRequest extends FortifyLoginRequest
             ],
         ];
     }
+    public function messages()
+    {
+        return [
+            'email.required' => 'メールアドレスを入力してください',
+            'password.required' => 'パスワードを入力してください',
+            'email.exists' => 'ログイン情報が登録されていません',
+        ];
+    }
 }
+

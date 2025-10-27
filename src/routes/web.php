@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\StampCorrectionRequestController;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 
 /*
@@ -22,6 +24,17 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+        ->middleware('guest:admin')
+        ->name('login');
+
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+        ->middleware('guest:admin')
+        ->name('login');
+});
+
+
 Route::middleware(['auth','verified'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
     Route::post('work-in', [AttendanceController::class, 'workIn'])->name('work-in');
@@ -32,4 +45,9 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::get('/attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::post('/attendance/detail/{date}', [StampCorrectionRequestController::class, 'requestCorrection'])->name('attendance.request')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'requestList'])->name('request.list');
+});
+
+
+Route::prefix('admin')->middleware('auth:admin')->name('admin.')->group(function () {
+    Route::get('/attendance/list', [AdminAttendanceController::class, 'showAttendanceList'])->name('attendance.list');
 });

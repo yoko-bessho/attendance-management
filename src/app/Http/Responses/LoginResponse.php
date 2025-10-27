@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use App\Providers\RouteServiceProvider;
@@ -16,13 +17,11 @@ class LoginResponse implements LoginResponseContract
      */
     public function toResponse($request)
     {
-        $user = $request->user();
 
-        // ユーザーの役割に応じてリダイレクト先を決定
-        if ($user->role === 'admin') {
-            $home = '/admin'; // 管理者用の遷移先（仮）
+        if (Auth::guard('admin')->check()) {
+            $home = '/admin/attendance/list';
         } else {
-            $home = RouteServiceProvider::HOME; // 一般ユーザー用の遷移先 ('/attendance')
+            $home = RouteServiceProvider::HOME;
         }
 
         return $request->wantsJson()

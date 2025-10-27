@@ -8,6 +8,7 @@ use App\Http\Responses\LoginResponse;
 use App\Http\Responses\LogoutResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
@@ -19,13 +20,10 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // カスタムLoginRequestの登録
         $this->app->bind(\Laravel\Fortify\Http\Requests\LoginRequest::class, LoginRequest::class);
 
-        // カスタムLoginResponseの登録
         $this->app->singleton(\Laravel\Fortify\Contracts\LoginResponse::class, LoginResponse::class);
 
-        // カスタムLogoutResponseの登録
         $this->app->singleton(\Laravel\Fortify\Contracts\LogoutResponse::class, LogoutResponse::class);
     }
 
@@ -41,7 +39,31 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::loginView(function () {
+            if (request()->is('admin/login')) {
+                return view('admin/auth/login');
+            }
             return view('auth.login');
+        });
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $guard = str_contains($request->path(), 'admin') ? 'admin' : 'web';
+
+            $credentials = $request->only(Fortify::username(), 'password');
+
+            $attemptResult = Auth::guard($guard)->attempt($credentials, $request->boolean('remember'));
+
+            if (Auth::guard($guard)->attempt($credentials, $request->boolean('remember'))) {
+                $user = Auth::guard($guard)->user();
+
+                if ($guard === 'admin' && $user->role !== 'admin') {
+                    Auth::guard($guard)->logout();
+                    return null;
+                }
+
+                return $user;
+            }
+
+            return null;
         });
 
         RateLimiter::for('login', function (Request $request) {
