@@ -49,5 +49,5 @@ Route::middleware(['auth','verified'])->group(function () {
 
 
 Route::prefix('admin')->middleware('auth:admin')->name('admin.')->group(function () {
-    Route::get('/attendance/list', [AdminAttendanceController::class, 'showAttendanceList'])->name('attendance.list');
+    Route::get('/attendance/list', [AdminAttendanceController::class, 'adminAttendanceList'])->name('admin.attendance.list');
 });

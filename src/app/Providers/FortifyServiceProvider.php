@@ -50,9 +50,9 @@ class FortifyServiceProvider extends ServiceProvider
 
             $credentials = $request->only(Fortify::username(), 'password');
 
-            $attemptResult = Auth::guard($guard)->attempt($credentials, $request->boolean('remember'));
+            $attemptResult = Auth::guard($guard)->attempt($credentials);
 
-            if (Auth::guard($guard)->attempt($credentials, $request->boolean('remember'))) {
+            if ($attemptResult) {
                 $user = Auth::guard($guard)->user();
 
                 if ($guard === 'admin' && $user->role !== 'admin') {
