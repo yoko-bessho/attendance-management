@@ -152,6 +152,7 @@ class AttendanceController extends Controller
 
     public function attendanceDetail($date)
     {
+        $user = Auth::user();
         $attendance = Attendance::with('user', 'breakTimes')
             ->where('user_id', Auth::id())
             ->whereDate('worked_at', $date)
@@ -162,7 +163,7 @@ class AttendanceController extends Controller
             ->where('status', StampCorrectionRequestsStatus::PENDING)
             ->first();
 
-        return view('attendance-detail', compact('attendance', 'date', 'pendingRequest'));
+        return view('attendance-detail', compact('attendance', 'date', 'pendingRequest', 'user'));
     }
 
 }

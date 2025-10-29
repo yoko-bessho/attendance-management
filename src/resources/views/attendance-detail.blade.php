@@ -47,7 +47,7 @@
         <table class="attendance-detail-table">
             <tr class="attendance-detail-table__row">
                 <th><label>名前</label></th>
-                <td>{{ Auth::user()->name }}</td>
+                <td>{{ $user->name }}</td>
             </tr>
 
             <tr class="attendance-detail-table__row">
