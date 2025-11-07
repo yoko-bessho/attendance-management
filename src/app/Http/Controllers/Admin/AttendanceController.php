@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\StampCorrectionRequest;
 use App\Enums\StampCorrectionRequestsStatus;
 use App\Models\Attendance;
+use PhpParser\Node\Stmt\Break_;
 
 class AttendanceController extends Controller
 {
@@ -36,20 +37,4 @@ class AttendanceController extends Controller
         return view('admin.attendance-list', compact('staffs', 'date', 'previousDay', 'nextDay'));
     }
 
-    public function adminAttendanceDetail(User $user, $date)
-    {
-        $attendance = Attendance::with('user', 'breakTimes', 'stampCorrectionRequests')
-            ->where('user_id', $user->id)
-            ->whereDate('worked_at', $date)
-            ->first();
-
-        $pendingRequest = null;
-        if ($attendance && $attendance->stampCorrectionRequests->isNotEmpty()) {
-            $pendingRequest = $attendance->stampCorrectionRequests->where('status', StampCorrectionRequestsStatus::PENDING)->first();
-        }
-
-        $date = Carbon::parse($date);
-
-        return view('attendance-detail', compact('user', 'attendance', 'date', 'pendingRequest'));
-    }
 }

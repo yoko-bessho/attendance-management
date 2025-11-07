@@ -6,27 +6,37 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\StampCorrectionRequest;
+use App\Models\User;
 use Carbon\Carbon;
 use App\Enums\StampCorrectionRequestsStatus;
 use App\Http\Requests\AttendanceCorrectionRequest;
+use App\Models\BreakTime;
 
 class StampCorrectionRequestController extends Controller
 {
-        public function requestCorrection(AttendanceCorrectionRequest $request, $date)
+    public function requestCorrection(AttendanceCorrectionRequest $request, $date, $userId = null)
     {
-        $attendance = Attendance::where('user_id', Auth::id())
+        $targetUserId = $userId ?? Auth::user()->id;
+
+        $attendance = Attendance::where('user_id', $targetUserId)
             ->whereDate('worked_at', $date)
             ->first();
 
-        $breaks = collect($request->input('breaks', []))->filter(function ($break) {
-            return !empty($break['start_time']) && !empty($break['end_time']);
-        })->values();
+        $breaks = collect($request->input('breaks', []))
+        ->filter(fn ($break) => !empty($break['start_time']) && !empty($break['end_time']))
+        ->values();
 
-        StampCorrectionRequest::create([
+        $status = Auth::user()->role === 'admin'
+            ? StampCorrectionRequestsStatus::APPROVAL
+            : StampCorrectionRequestsStatus::PENDING;
+
+        $reason = $request->input('reason') . (Auth::user()->role === 'admin' ? '(管理者入力:' . Auth::user()->name . ')' : '');
+
+        $stampRequest = StampCorrectionRequest::create([
             'attendance_id' => optional($attendance)->id,
-            'user_id' => Auth::id(),
+            'user_id' => $targetUserId,
             'request_date' => $date,
-            'reason' => $request->input('reason'),
+            'reason' => $reason,
             'revised_start_time' => $request->filled('start_time')
                 ? Carbon::createFromFormat('Y-m-d H:i', "{$date} {$request->start_time}")
                 : null,
@@ -34,11 +44,51 @@ class StampCorrectionRequestController extends Controller
                 ? Carbon::createFromFormat('Y-m-d H:i', "{$date} {$request->end_time}")
                 : null,
             'revised_breaks' => $breaks->isNotEmpty() ? $breaks->toJson() : null,
-            'status' => StampCorrectionRequestsStatus::PENDING,
+            'status' => $status,
         ]);
 
-        return redirect()->route('attendance.list')->with('success', '修正申請を送信しました。');
+        if (Auth::user()->role === 'admin') {
+            Attendance::updateOrCreate(
+                [
+                    'user_id' => $targetUserId,
+                    'worked_at' => $stampRequest->request_date,
+                ],
+                [
+                    'start_time' => $stampRequest->revised_start_time,
+                    'end_time' => $stampRequest->revised_end_time,
+                ]
+            );
+
+            if ($stampRequest->revised_breaks) {
+                if ($breaks) {
+                    $attendance->breakTimes()->delete();
+
+                    $breaks = json_decode($stampRequest->revised_breaks, true);
+
+                    foreach ($breaks as $break) {
+                        $attendance->breakTimes()->create([
+                            'start_time' => Carbon::parse("{$date} {$break['start_time']}"),
+                            'end_time'   => Carbon::parse("{$date} {$break['end_time']}"),
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $date = Carbon::parse($date)->format('Y-m-d');
+
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.attendance.detail', [
+                'user' => $targetUserId,
+                'date' => $date,
+            ])->with('success', '修正申請を登録し勤怠データに反映しました');
+        }
+        
+        return redirect()->route('attendance.detail', [
+            'date' => $date,
+        ]);
     }
+
 
     public function requestList(Request $request)
     {
@@ -53,8 +103,7 @@ class StampCorrectionRequestController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('request-list', compact('requests', 'tab'));
-    }
+        return view('request-list', compact('requests', 'tab'));    }
 
 }
 

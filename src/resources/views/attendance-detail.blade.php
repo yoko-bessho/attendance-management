@@ -16,22 +16,6 @@
     <div class="attendance__header">
         <h1 class="header__title">勤怠詳細</h1>
     </div>
-    @php
-        $isPending = (bool) $pendingRequest;
-        $disabled = $isPending ? 'disabled' : '';
-
-        if ($isPending) {
-            $displayStartTime = $pendingRequest->revised_start_time;
-            $displayEndTime = $pendingRequest->revised_end_time;
-            $displayReason = $pendingRequest->reason;
-            $displayBreaks = json_decode($pendingRequest->revised_breaks) ?? [];
-        } else {
-            $displayStartTime = optional($attendance)->start_time;
-            $displayEndTime = optional($attendance)->end_time;
-            $displayReason = ''; // 申請理由は常に新規入力
-            $displayBreaks = optional($attendance)->breakTimes ?? [];
-        }
-    @endphp
     @if ($errors->any())
         <div class="alert alert-danger" style="color: red;">
             <ul>
@@ -42,7 +26,14 @@
         </div>
     @endif
 
-    <form class="attendance-detail-form" action="{{ route('attendance.request', ['date' => $date]) }}" method="POST">
+    <form class="attendance-detail-form"
+        method="POST"
+        action="{{ Auth::user()->role === 'admin'
+        ? route('admin.modify.attendance', ['user' => $user, 'date' => \Carbon\Carbon::parse($date)->format('Y-m-d')])
+        : route('attendance.request', ['date' => \Carbon\Carbon::parse($date)->format('Y-m-d')]) }}">
+        @if (Auth::user()->role === 'admin')
+            @method('PATCH')
+        @endif
         @csrf
         <table class="attendance-detail-table">
             <tr class="attendance-detail-table__row">
@@ -58,9 +49,9 @@
             <tr class="attendance-detail-table__row">
                 <th><label>出勤・退勤</label></th>
                 <td>
-                    <input class="time-input" type="time" name="start_time" value="{{ $displayStartTime ? \Carbon\Carbon::parse($displayStartTime)->format('H:i') : '' }}" {{ $disabled }}>
+                    <input class="time-input" type="time" name="start_time" value="{{ $displayStartTime ? \Carbon\Carbon::parse($displayStartTime)->format('H:i') : '' }}" {{ $disabled ? 'disabled' : '' }}>
                     <span>　〜　</span>
-                    <input class="time-input" type="time" name="end_time" value="{{ $displayEndTime ? \Carbon\Carbon::parse($displayEndTime)->format('H:i') : '' }}" {{ $disabled }}>
+                    <input class="time-input" type="time" name="end_time" value="{{ $displayEndTime ? \Carbon\Carbon::parse($displayEndTime)->format('H:i') : '' }}" {{ $disabled ? 'disabled' : '' }}>
                 </td>
             </tr>
 
@@ -69,9 +60,9 @@
                 <td>
                     @foreach($displayBreaks as $key => $break)
                     <div class="break-time__group">
-                        <input class="time-input" type="time" name="breaks[{{ $key }}][start_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'start_time'))->format('H:i') }}" {{ $disabled }}>
+                        <input class="time-input" type="time" name="revised_breaks[{{ $key }}][start_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'start_time'))->format('H:i') }}" {{ $disabled ? 'disabled' : '' }}>
                         <span>　〜　</span>
-                        <input class="time-input" type="time" name="breaks[{{ $key }}][end_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'end_time'))->format('H:i') }}" {{ $disabled }}>
+                        <input class="time-input" type="time" name="[{{ $key }}][end_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'end_time'))->format('H:i') }}" {{ $disabled ? 'disabled' : '' }}>
                     </div>
                     @endforeach
                 </td>
@@ -81,31 +72,34 @@
                 <th><label>休憩2</label></th>
                 <td>
                     <div class="break-time__group">
-                        <input type="time" name="breaks[new][start_time]" class="time-input" {{ $disabled }}>
+                        <input type="time" name="breaks[new][start_time]" class="time-input" {{ $disabled ? 'disabled' : '' }}>
                         <span>　〜　</span>
-                        <input type="time" name="breaks[new][end_time]" class="time-input" {{ $disabled }}>
+                        <input type="time" name="breaks[new][end_time]" class="time-input" {{ $disabled ? 'disabled' : '' }}>
                     </div>
                 </td>
             </tr>
 
             <tr class="attendance-detail-table__row">
                 <th><label>備考</label></th>
-                <td><textarea class="textarea" name="reason" rows="4" {{ $disabled }}>{{ $displayReason }}</textarea></td>
+                <td><textarea class="textarea" name="reason" rows="4" {{ $disabled ? 'disabled' : '' }}>{{ $displayReason }}</textarea></td>
             </tr>
         </table>
         
-        @if(!$isPending)
+        @if($disabled == false)
         <div class="form-action">
             <button class="form-aciton__button" type="submit">修正</button>
         </div>
         @endif
     </form>
 
-    @if($isPending)
+    @if ($disabled == true)
         <div class="pending-notice">
             <p>* 承認待ちのため申請できません</p>
         </div>
     @endif
 
+    @if (session('success'))
+        <p>{{ session('success') }}</p>
+    @endif
 </div>
 @endsection

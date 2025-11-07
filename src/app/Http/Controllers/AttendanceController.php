@@ -150,20 +150,39 @@ class AttendanceController extends Controller
         return view('attendance-list', compact('month', 'previousMonth', 'nextMonth', 'dates', 'attendanceMap', 'weekdays'));
     }
 
-    public function attendanceDetail($date)
+    public function attendanceDetail($date, $user = null)
     {
-        $user = Auth::user();
+        $user = $user ? User::find($user) : Auth::user();
         $attendance = Attendance::with('user', 'breakTimes')
-            ->where('user_id', Auth::id())
+            ->where('user_id', $user->id)
             ->whereDate('worked_at', $date)
             ->first();
 
-        $pendingRequest = StampCorrectionRequest::where('user_id', Auth::id())
+        $stampRequest = StampCorrectionRequest::where('user_id', $user->id)
             ->where('request_date', $date)
-            ->where('status', StampCorrectionRequestsStatus::PENDING)
+            ->latest()
             ->first();
 
-        return view('attendance-detail', compact('attendance', 'date', 'pendingRequest', 'user'));
+        $displayStartTime = optional($attendance)->start_time;
+        $displayEndTime = optional($attendance)->end_time;
+        $displayBreaks = optional($attendance)->breakTimes ?? collect();
+        $displayReason = '';
+        $disabled = false;
+
+        if($stampRequest) {
+            if ($stampRequest->status == StampCorrectionRequestsStatus::PENDING) {
+                $displayStartTime = $stampRequest->revised_start_time;
+                $displayEndTime = $stampRequest->revised_end_time;
+                $displayBreaks = collect(json_decode($stampRequest->revised_breaks, true) ?? []);
+                $displayReason = $stampRequest->reason;
+                $disabled = true;
+            } else {
+                $displayReason = $stampRequest->reason;
+                $disabled = false;
+            }
+        }
+
+        return view('attendance-detail', compact('attendance', 'date', 'stampRequest', 'displayStartTime' , 'displayEndTime', 'displayBreaks', 'displayReason', 'disabled', 'user'));
     }
 
 }
