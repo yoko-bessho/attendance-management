@@ -50,5 +50,6 @@ Route::middleware(['auth','verified'])->group(function () {
 
 Route::prefix('admin')->middleware('auth:admin')->name('admin.')->group(function () {
     Route::get('/attendance/list', [AdminAttendanceController::class, 'adminAttendanceList'])->name('attendance.list');
-    Route::get('/attendance/detail/{user}/{date}', [AdminAttendanceController::class, 'adminAttendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+    Route::get('/attendance/detail/{date}/{user}', [AttendanceController::class, 'AttendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+    Route::patch('/attendance/detail/{date}/{user}', [StampCorrectionRequestController::class, 'requestCorrection'])->name('modify.attendance')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
 });
