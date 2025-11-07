@@ -60,9 +60,10 @@
                 <td>
                     @foreach($displayBreaks as $key => $break)
                     <div class="break-time__group">
-                        <input class="time-input" type="time" name="revised_breaks[{{ $key }}][start_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'start_time'))->format('H:i') }}" {{ $disabled ? 'disabled' : '' }}>
+                        <input type="hidden" name="breaks[{{ $key }}][id]" value="{{ data_get($break, 'id') }}">
+                        <input class="time-input" type="time" name="breaks[{{ $key }}][start_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'start_time'))->format('H:i') }}" {{ $disabled ? 'disabled' : '' }}>
                         <span>　〜　</span>
-                        <input class="time-input" type="time" name="[{{ $key }}][end_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'end_time'))->format('H:i') }}" {{ $disabled ? 'disabled' : '' }}>
+                        <input class="time-input" type="time" name="breaks[{{ $key }}][end_time]" value="{{ \Carbon\Carbon::parse(data_get($break, 'end_time'))->format('H:i') }}" {{ $disabled ? 'disabled' : '' }}>
                     </div>
                     @endforeach
                 </td>

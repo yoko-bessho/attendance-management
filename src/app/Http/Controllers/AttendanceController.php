@@ -165,20 +165,18 @@ class AttendanceController extends Controller
 
         $displayStartTime = optional($attendance)->start_time;
         $displayEndTime = optional($attendance)->end_time;
-        $displayBreaks = optional($attendance)->breakTimes ?? collect();
+        $displayBreaks = $attendance->breakTimes ?? collect();
         $displayReason = '';
         $disabled = false;
 
         if($stampRequest) {
+            $displayStartTime = $stampRequest->revised_start_time;
+            $displayEndTime = $stampRequest->revised_end_time;
+            $displayBreaks = collect(json_decode($stampRequest->revised_breaks, true)) ?? collect();
+            $displayReason = $stampRequest->reason;
+
             if ($stampRequest->status == StampCorrectionRequestsStatus::PENDING) {
-                $displayStartTime = $stampRequest->revised_start_time;
-                $displayEndTime = $stampRequest->revised_end_time;
-                $displayBreaks = collect(json_decode($stampRequest->revised_breaks, true) ?? []);
-                $displayReason = $stampRequest->reason;
                 $disabled = true;
-            } else {
-                $displayReason = $stampRequest->reason;
-                $disabled = false;
             }
         }
 

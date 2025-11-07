@@ -59,18 +59,30 @@ class StampCorrectionRequestController extends Controller
                 ]
             );
 
-            if ($stampRequest->revised_breaks) {
-                if ($breaks) {
-                    $attendance->breakTimes()->delete();
+            if ($attendance) {
+                // DBに保存されている休憩時間のIDリストを取得
+                $existingBreakIds = $attendance->breakTimes()->pluck('id')->all();
+                
+                // リクエストされた休憩時間のIDリストを取得 ($breaksはリクエストから生成済み)
+                $requestedBreakIds = $breaks->pluck('id')->filter()->all();
 
-                    $breaks = json_decode($stampRequest->revised_breaks, true);
+                // 削除すべき休憩時間IDを特定
+                $deletableBreakIds = array_diff($existingBreakIds, $requestedBreakIds);
+                if (!empty($deletableBreakIds)) {
+                    BreakTime::destroy($deletableBreakIds);
+                }
 
-                    foreach ($breaks as $break) {
-                        $attendance->breakTimes()->create([
-                            'start_time' => Carbon::parse("{$date} {$break['start_time']}"),
-                            'end_time'   => Carbon::parse("{$date} {$break['end_time']}"),
-                        ]);
-                    }
+                foreach ($breaks as $break) {
+                    $breakData = [
+                        'start_time' => Carbon::parse("{$date} {$break['start_time']}"),
+                        'end_time'   => Carbon::parse("{$date} {$break['end_time']}"),
+                    ];
+
+                    // id がある場合は更新、ない場合は作成
+                    $attendance->breakTimes()->updateOrCreate(
+                        ['id' => data_get($break, 'id')],
+                        $breakData
+                    );
                 }
             }
         }
