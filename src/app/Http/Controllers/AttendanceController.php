@@ -119,8 +119,11 @@ class AttendanceController extends Controller
     }
 
 
-    public function attendanceList(Request $request)
+    public function attendanceList(Request $request, $userId = null)
     {
+        $targetUserId = $userId ?? Auth::user()->id;
+        $targetUser = User::find($targetUserId);
+
         $month = $request->input('month')
             ? Carbon::parse($request->input('month'))
             : Carbon::now();
@@ -128,7 +131,7 @@ class AttendanceController extends Controller
         $startOfMonth = $month->copy()->startOfMonth();
         $endOfMonth = $month->copy()->endOfMonth();
 
-        $attendances = Attendance::where('user_id', Auth::id())
+        $attendances = Attendance::where('user_id', $targetUserId)
             ->whereBetween('worked_at', [$startOfMonth, $endOfMonth])
             ->with('breakTimes')
             ->get();
@@ -147,7 +150,7 @@ class AttendanceController extends Controller
 
         $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
-        return view('attendance-list', compact('month', 'previousMonth', 'nextMonth', 'dates', 'attendanceMap', 'weekdays'));
+        return view('attendance-list', compact('month', 'previousMonth', 'nextMonth', 'dates', 'attendanceMap', 'weekdays', 'targetUser'));
     }
 
     public function attendanceDetail($date, $user = null)
