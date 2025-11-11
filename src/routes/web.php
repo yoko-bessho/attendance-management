@@ -52,4 +52,8 @@ Route::prefix('admin')->middleware('auth:admin')->name('admin.')->group(function
     Route::get('/attendance/list', [AdminAttendanceController::class, 'adminAttendanceList'])->name('attendance.list');
     Route::get('/attendance/detail/{date}/{user}', [AttendanceController::class, 'AttendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::patch('/attendance/detail/{date}/{user}', [StampCorrectionRequestController::class, 'requestCorrection'])->name('modify.attendance')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+    Route::get('/staff/li
+    st', [UserController::class, 'staffList'])->name('staff.list');
+    Route::get('/attendance/staff/{id}', [AttendanceController::class, 'attendanceList'])->name('attendance.staff.list');
+    Route::post('/attendance/export/{user}', [AdminAttendanceController::class, 'export'])->name('attendance.export');
 });
