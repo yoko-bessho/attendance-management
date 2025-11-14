@@ -22,7 +22,7 @@
     </div>
 
     <div class="tab-content">
-    <table class="request-table">
+        <table class="request-table">
             <thead>
                 <tr class="request-table__row">
                     <th>状態</th>
@@ -37,11 +37,17 @@
                 @foreach($requests as $request)
                 <tr class="request-table__row">
                     <td>{{ $request->status->label() }}</td>
-                    <td>{{ Auth::user()->name }}</td>
+                    <td>{{ Auth::user()->role === 'admin' ? $request->user->name :Auth::user()->name }}</td>
                     <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
                     <td>{{ $request->reason }}</td>
                     <td>{{ $request->created_at->format('Y/m/d')}}</td>
-                    <td><a class="attendance-detail__button" href="{{ route('attendance.detail', ['date' => $request->request_date]) }}">詳細</a></td>
+                    <td>
+                        @if (Auth::user()->role === 'admin')
+                            <a class="attendance-detail__button" href="{{ route('admin.attendance.detail', ['user' => $request->user->id, 'date' => $request->request_date]) }}">詳細</a>
+                        @else
+                            <a class="attendance-detail__button" href="{{ route('attendance.detail', ['date' => $request->request_date]) }}">詳細</a>
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

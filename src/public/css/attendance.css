@@ -23,7 +23,7 @@
     .attendance-detail__container,
     .request-list__container {
         padding: 0 5%;
-        width: 90%;
+        width: 100%;
     }
 }
 
@@ -185,16 +185,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .form-action {
     text-align: right;
-    margin-top: 10px;
+    margin-top: 30px;
 }
 
-.form-aciton__button {
+.form-action__button, .form-action__button--approved {
     background-color: #000;
     color: #fff;
     font-weight: bold;
     border-radius: 5%;
-    padding: 6px 36px;
+    padding: 6px 30px;
     font-size: 24px;
+}
+
+.form-action__button--approved {
+    display: inline-block;
+    background-color: #737373;
 }
 
 .time-input {

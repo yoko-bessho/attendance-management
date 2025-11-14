@@ -177,12 +177,12 @@ class AttendanceController extends Controller
             $displayEndTime = $stampRequest->revised_end_time;
             $displayBreaks = collect(json_decode($stampRequest->revised_breaks, true)) ?? collect();
             $displayReason = $stampRequest->reason;
-
-            if ($stampRequest->status == StampCorrectionRequestsStatus::PENDING) {
-                $disabled = true;
-            }
         }
 
+        if ($stampRequest && $stampRequest->status == StampCorrectionRequestsStatus::APPROVAL) {
+            $disabled = true;
+        }
+        
         return view('attendance-detail', compact('attendance', 'date', 'stampRequest', 'displayStartTime' , 'displayEndTime', 'displayBreaks', 'displayReason', 'disabled', 'user'));
     }
 
