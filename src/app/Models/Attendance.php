@@ -21,6 +21,12 @@ class Attendance extends Model
         'worked_at',
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+        'worked_at' => 'datetime',
+    ];
+
 
     public function user()
     {
