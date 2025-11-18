@@ -59,7 +59,7 @@
                     <td>{{ optional($currentAttendance)->formatted_work_time }}</td>
                     <td>
                         @if (Auth::user()->role === 'admin' && isset($targetUser))
-                            <a class="attendance-detail__button" href="{{ route('admin.attendance.detail', ['user' => $targetUser->id, 'date' => $date->format('Y-m-d')]) }}">詳細</a>
+                            <a class="attendance-detail__button" href="{{ route('admin.attendance.detail', ['id' => $targetUser->id, 'date' => $date->format('Y-m-d')]) }}">詳細</a>
                         @else
                             <a class="attendance-detail__button" href="{{ route('attendance.detail', ['date' => $date->format('Y-m-d')]) }}">詳細</a>
                         @endif

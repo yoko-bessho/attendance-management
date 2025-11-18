@@ -12,6 +12,7 @@ use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\Carbon;
+use Facade\FlareClient\View;
 
 class AttendanceController extends Controller
 {
@@ -119,9 +120,9 @@ class AttendanceController extends Controller
     }
 
 
-    public function attendanceList(Request $request, $userId = null)
+    public function attendanceList(Request $request, $id = null)
     {
-        $targetUserId = $userId ?? Auth::user()->id;
+        $targetUserId = $id ?? Auth::user()->id;
         $targetUser = User::find($targetUserId);
 
         $month = $request->input('month')
@@ -155,35 +156,32 @@ class AttendanceController extends Controller
 
     public function attendanceDetail($date, $user = null)
     {
-        $user = $user ? User::find($user) : Auth::user();
+        $isAdmin = Auth::user()->role === 'admin';
+        $targetUser = $user ? User::find($user) : Auth::user();
         $attendance = Attendance::with('user', 'breakTimes')
-            ->where('user_id', $user->id)
+            ->where('user_id', $targetUser->id)
             ->whereDate('worked_at', $date)
             ->first();
 
-        $stampRequest = StampCorrectionRequest::where('user_id', $user->id)
+        $stampRequest = StampCorrectionRequest::where('user_id', $targetUser->id)
             ->where('request_date', $date)
             ->latest()
             ->first();
-
-        $displayStartTime = optional($attendance)->start_time;
-        $displayEndTime = optional($attendance)->end_time;
-        $displayBreaks = $attendance->breakTimes ?? collect();
-        $displayReason = '';
-        $disabled = false;
-
-        if($stampRequest) {
-            $displayStartTime = $stampRequest->revised_start_time;
-            $displayEndTime = $stampRequest->revised_end_time;
-            $displayBreaks = collect(json_decode($stampRequest->revised_breaks, true)) ?? collect();
-            $displayReason = $stampRequest->reason;
-        }
-
-        if ($stampRequest && $stampRequest->status == StampCorrectionRequestsStatus::APPROVAL) {
-            $disabled = true;
-        }
         
-        return view('attendance-detail', compact('attendance', 'date', 'stampRequest', 'displayStartTime' , 'displayEndTime', 'displayBreaks', 'displayReason', 'disabled', 'user'));
+        $display = app(\App\Services\AttendanceDisplayService::class)
+            ->build($attendance, $stampRequest);
+
+        $mode = 'detail';
+
+        return View('attendance-detail', array_merge([
+            'attendance' => $attendance,
+            'date' => $date,
+            'stampRequest' => $stampRequest,
+            'targetUser' => $targetUser,
+            'mode' => $mode,
+            'isAdmin' => $isAdmin,
+        ], $display));
+
     }
 
 }

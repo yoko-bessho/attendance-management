@@ -43,7 +43,7 @@
                     <td>{{ $request->created_at->format('Y/m/d')}}</td>
                     <td>
                         @if (Auth::user()->role === 'admin')
-                            <a class="attendance-detail__button" href="{{ route('admin.attendance.detail', ['user' => $request->user->id, 'date' => $request->request_date]) }}">詳細</a>
+                            <a class="attendance-detail__button" href="{{ route('approval.form', ['attendance_correct_request_id' => $request->id]) }}">詳細</a>
                         @else
                             <a class="attendance-detail__button" href="{{ route('attendance.detail', ['date' => $request->request_date]) }}">詳細</a>
                         @endif

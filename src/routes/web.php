@@ -41,17 +41,19 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::post('work-out', [AttendanceController::class, 'workOut'])->name('work-out');
     Route::post('break-start', [AttendanceController::class, 'breakStart'])->name('break-start');
     Route::post('break-end', [AttendanceController::class, 'breakEnd'])->name('break-end');
+
     Route::get('attendance/list', [AttendanceController::class, 'attendanceList'])->name('attendance.list');
     Route::get('/attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::post('/attendance/detail/{date}', [StampCorrectionRequestController::class, 'requestCorrection'])->name('attendance.request')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'requestList'])->name('request.list');
+    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [StampCorrectionRequestController::class, 'approvalForm'])->name('approval.form');
 });
 
 
 Route::prefix('admin')->middleware('auth:admin')->name('admin.')->group(function () {
     Route::get('/attendance/list', [AdminAttendanceController::class, 'adminAttendanceList'])->name('attendance.list');
-    Route::get('/attendance/detail/{date}/{user}', [AttendanceController::class, 'AttendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
-    Route::patch('/attendance/detail/{date}/{user}', [StampCorrectionRequestController::class, 'requestCorrection'])->name('modify.attendance')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+    Route::get('/attendance/{date}/{id}', [AttendanceController::class, 'AttendanceDetail'])->name('attendance.detail')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+    Route::post('/attendance/{date}/{id}', [StampCorrectionRequestController::class, 'requestCorrection'])->name('modify.attendance')->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::patch('/stamp_correction_request/approve/{attendance_correct_request_id}', [StampCorrectionRequestController::class, 'approval'])->name('approval');
     Route::get('/staff/list', [UserController::class, 'staffList'])->name('staff.list');
     Route::get('/attendance/staff/{id}', [AttendanceController::class, 'attendanceList'])->name('attendance.staff.list');

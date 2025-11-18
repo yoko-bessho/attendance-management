@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\StampCorrectionRequest;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Services\AttendanceDisplayService;
 use App\Enums\StampCorrectionRequestsStatus;
 use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\BreakTime;
@@ -15,9 +16,10 @@ use Illuminate\Support\Optional;
 
 class StampCorrectionRequestController extends Controller
 {
-    public function requestCorrection(AttendanceCorrectionRequest $request, $date, $userId = null)
+    // 勤怠修正申請、管理者による修正の場合そのまま登録処理
+    public function requestCorrection(AttendanceCorrectionRequest $request, $date, $id = null)
     {
-        $targetUserId = $userId ?? Auth::user()->id;
+        $targetUserId = $id ?? Auth::user()->id;
 
         $attendance = Attendance::where('user_id', $targetUserId)
             ->whereDate('worked_at', $date)
@@ -27,7 +29,8 @@ class StampCorrectionRequestController extends Controller
         ->filter(fn ($break) => !empty($break['start_time']) && !empty($break['end_time']))
         ->values();
 
-        $status = Auth::user()->role === 'admin'
+        $isAdmin = Auth::user()->role === 'admin';
+        $status = $isAdmin
             ? StampCorrectionRequestsStatus::APPROVAL
             : StampCorrectionRequestsStatus::PENDING;
 
@@ -48,7 +51,7 @@ class StampCorrectionRequestController extends Controller
             'status' => $status,
         ]);
 
-        if (Auth::user()->role === 'admin') {
+        if ($isAdmin) {
             Attendance::updateOrCreate(
                 [
                     'user_id' => $targetUserId,
@@ -62,29 +65,26 @@ class StampCorrectionRequestController extends Controller
 
             if ($attendance) {
                 foreach ($breaks as $break) {
-                    $breakData = [
-                        'start_time' => Carbon::parse("{$date} {$break['start_time']}"),
-                        'end_time' => Carbon::parse("{$date} {$break['end_time']}"),
-                    ];
-
                     $attendance->breakTimes()->updateOrCreate(
-                        ['id' => data_get($break, 'id')], $breakData
+                        ['id' => data_get($break, 'id')],
+                        [
+                            'start_time' => Carbon::parse("{$date} {$break['start_time']}"),
+                            'end_time' => Carbon::parse("{$date} {$break['end_time']}"),
+                        ]
                     );
                 }
             }
-        }
 
-        $date = Carbon::parse($date)->format('Y-m-d');
-
-        if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.attendance.detail', [
-                'user' => $targetUserId,
-                'date' => $date,
-            ])->with('success', '修正申請を登録し勤怠データに反映しました');
+                'id' => $targetUserId,
+                'date' => Carbon::parse($date)->format('Y-m-d'),
+            ])
+                ->with('success', '勤怠修正を登録しました');
         }
 
         return redirect()->route('attendance.detail', [
-            'date' => $date,
+            'id' => $targetUserId,
+            'date' => Carbon::parse($date)->format('Y-m-d'),
         ]);
     }
 
@@ -113,8 +113,33 @@ class StampCorrectionRequestController extends Controller
         return view('request-list', compact('requests', 'tab'));
     }
 
+    public function approvalForm($attendance_correct_request_id)
+    {
+        $stampRequest = StampCorrectionRequest::with('user', 'attendance.breakTimes')->find($attendance_correct_request_id);
 
-        public function approval($attendance_correct_request_id)
+        $attendance = Attendance::where('user_id', $stampRequest->user_id)
+            ->whereDate('worked_at', $stampRequest->request_date)
+            ->first();
+        $display = app(\App\Services\AttendanceDisplayService::class)
+            ->build($attendance, $stampRequest);
+
+        $isAdmin = Auth::user()->role === 'admin';
+
+        return view('attendance-detail',array_merge([
+            'mode' => 'approval',
+            'isAdmin' => $isAdmin,
+            'stampRequest' => $stampRequest,
+            'attendance' => $attendance,
+            'date' => $stampRequest->request_date,
+            'targetUser' => $stampRequest->user,
+            'actionRoute' => route('admin.approval', [
+                'attendance_correct_request_id' => $stampRequest->id,
+            ]),
+        ], $display));
+
+    }
+
+    public function approval($attendance_correct_request_id)
     {
         $stampRequest = StampCorrectionRequest::findOrFail($attendance_correct_request_id);
 
@@ -153,7 +178,7 @@ class StampCorrectionRequestController extends Controller
         $stampRequest->save();
 
         return redirect()->route('admin.attendance.detail', [
-            'date' => $stampRequest->request_date, 'user' => $stampRequest->user_id])->with('success', '勤怠修正申請を承認し勤怠データに反映しました');
+            'date' => $stampRequest->request_date, 'id' => $stampRequest->user_id])->with('success', '勤怠修正申請を承認し勤怠データに反映しました');
     }
 }
 

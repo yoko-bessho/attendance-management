@@ -42,7 +42,7 @@
                         <td>{{ $attendance->formatted_break_time }}</td>
                         <td>{{ $attendance->formatted_work_time }}</td>
                         <td>
-                            <a class="attendance-detail__button" href="{{ route('admin.modify.attendance', ['user' => $staff->id, 'date' => $date->format('Y-m-d')]) }}">詳細</a>
+                            <a class="attendance-detail__button" href="{{ route('admin.modify.attendance', ['id' => $staff->id, 'date' => $date->format('Y-m-d')]) }}">詳細</a>
                         </td>
                     @else
                         <td></td>
@@ -50,7 +50,7 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <a class="attendance-detail__button" href="{{ route('admin.attendance.detail', ['user' => $staff->id, 'date' => $date->format('Y-m-d')]) }}">詳細</a>
+                            <a class="attendance-detail__button" href="{{ route('admin.attendance.detail', ['id' => $staff->id, 'date' => $date->format('Y-m-d')]) }}">詳細</a>
                         </td>
                     @endif
                 </tr>
