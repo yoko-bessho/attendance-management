@@ -109,7 +109,7 @@ class Attendance extends Model
             $statusLabel['work_in'] = false;
 
             if (is_null($attendance->end_time)) {
-                $latestBreak = $attendance->breakTimes()->latest()->first();
+                $latestBreak = $attendance->breakTimes()->orderBy('id', 'desc')->first();
                 if ($latestBreak && is_null($latestBreak->end_time)) {
                     $statusLabel['break_end'] = true;
                 } else {

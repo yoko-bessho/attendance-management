@@ -19,7 +19,7 @@ class AttendancesTableSeeder extends Seeder
     {
         $user = User::where('role', 'staff')->first();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 1; $i < 10; $i++) {
             $date = Carbon::now()->subDays($i)->format('Y-m-d');
 
             Attendance::create([
