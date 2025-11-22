@@ -20,15 +20,21 @@
         <h1 class="header__title">勤怠一覧</h1>
         @endif
     </div>
+
     <div class="month-selector">
         @if (Auth::user()->role === 'admin' && isset($targetUser))
             <a href="{{ route('admin.attendance.staff.list', ['id' => $targetUser->id, 'month' => $previousMonth->format('Y-m')]) }}" class="month-btn"><img class="previous-arrow" src="{{ asset('img/arrow.png') }}" alt="arrow"> 前月</a>
         @else
             <a href="{{ route('attendance.list', ['month' => $previousMonth->format('Y-m')]) }}" class="month-btn"><img class="previous-arrow" src="{{ asset('img/arrow.png') }}" alt="arrow"> 前月</a>
         @endif
-        <input type="month" class="month-input"
-        name="month"
-        value="{{ $month->format('Y-m') }}">
+
+        <div class="month-display-wrapper">
+            <input type="month" class="month-input"
+            name="month"
+            value="{{ $month->format('Y-m') }}">
+            <span class="formatted-month">{{ $month->format('Y/m') }}</span>
+        </div>
+
         @if (Auth::user()->role === 'admin' && isset($targetUser))
             <a href="{{ route('admin.attendance.staff.list', ['id' => $targetUser->id, 'month' => $nextMonth->format('Y-m')]) }}" class="month-btn">翌月 <img class="next-arrow" src="{{ asset('img/arrow.png') }}" alt="arrow"></a>
         @else

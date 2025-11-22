@@ -67,17 +67,22 @@
     cursor: pointer;
 }
 
-.month-input,
 .day-input {
     font-size: 18px;
     padding: 5px 50px;
     border: none;
 }
 
-input[type="month"],
-input[type="date"] {
-    width: 200px;
+.day-display-wrapper,
+.month-display-wrapper {
     position: relative;
+}
+
+.day-input,
+.month-input {
+    border: none;
+    color: transparent;
+    width: 210px;
 }
 
 input[type="month"]::-webkit-calendar-picker-indicator,
@@ -85,6 +90,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     background: url('/img/calendar-icon.svg');
     position: absolute;
     left:20px;
+}
+
+.formatted-month {
+    position: absolute;
+    left: 8px;
+    top: -6px;
+    pointer-events: none; /*クリックはinputに行くようにする*/
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    padding: 5px 50px;
+}
+
+.formatted-day {
+    position: absolute;
+    left: 8px;
+    top: -1px;
+    pointer-events: none; /*クリックはinputに行くようにする*/
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    padding: 5px 50px;
 }
 
 .attendance-table,
