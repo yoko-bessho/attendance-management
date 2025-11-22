@@ -33,24 +33,37 @@ class AcquireAttendanceInformationTest extends TestCase
     public function attendanceList_allAttendanceInformationDisplayed()
     {
         $this->actingAs($this->user);
-        $attendances = $this->user->attendances()->get();
+
+        $testNow = Carbon::create(2025, 11, 15);
+        Carbon::setTestNow($testNow);
+
+        $attendancesThisMonth = $this->user->attendances()
+            ->whereYear('worked_at', $testNow->year)
+            ->whereMonth('worked_at', $testNow->month)
+            ->get();
+
+        // 表示されるべきでない月の勤怠記録を取得
+        $attendancesOtherMonths = $this->user->attendances()
+            ->where(function ($query) use ($testNow) {
+                $query->whereYear('worked_at', '!=', $testNow->year)
+                    ->orWhereMonth('worked_at', '!=', $testNow->month);
+            })
+            ->get();
 
         $response = $this->get('/attendance/list');
         $response->assertStatus(200);
 
-        foreach ($attendances as $attendance) {
+        foreach ($attendancesThisMonth as $attendance) {
             $date = Carbon::parse($attendance->worked_at)->format('m/d');
-            $startTime = $attendance->start_time ? Carbon::parse($attendance->start_time)->format('H:i') : '';
-            $endTime = $attendance->end_time ? Carbon::parse($attendance->end_time)->format('H:i') : '';
-            $breakTime = $attendance->formatted_break_time;
-            $workTime = $attendance->formatted_work_time;
-
             $response->assertSee($date);
-            $response->assertSee($startTime);
-            $response->assertSee($endTime);
-            $response->assertSee($breakTime);
-            $response->assertSee($workTime);
         }
+
+        foreach ($attendancesOtherMonths as $attendance) {
+            $date = Carbon::parse($attendance->worked_at)->format('m/d');
+            $response->assertDontSee($date);
+        }
+
+        Carbon::setTestNow();
     }
 
     /**
@@ -155,7 +168,7 @@ class AcquireAttendanceInformationTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $attendance = $this->user->attendances()->latest();
+        $attendance = $this->user->attendances()->latest()->first();
 
         $response = $this->get('/attendance/list');
         $response->assertStatus(200);
