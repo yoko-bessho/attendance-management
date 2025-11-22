@@ -49,7 +49,10 @@
 
             <tr class="attendance-detail-table__row">
                 <th><label>日付</label></th>
-                <td>{{ \Carbon\Carbon::parse($date)->format('Y年m月d日')}}</td>
+                <td class="attendance-detail-date">
+                    <p>{{ \Carbon\Carbon::parse($date)->format('Y年')}}</p>
+                    <p>{{ \Carbon\Carbon::parse($date)->format('m月d日')}}</p>
+                </td>
             </tr>
 
             <tr class="attendance-detail-table__row">
