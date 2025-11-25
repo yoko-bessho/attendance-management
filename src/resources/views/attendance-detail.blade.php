@@ -127,20 +127,20 @@
         </table>
 
         <div class="form-action">
-        @if ($mode === 'approval')
-            <button type="submit" class="form-action__button">承認</button>
-        @else
-            @if ($stampRequest && $stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::PENDING && Auth::user()->role == 'staff')
+        @if ($attendance && $stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::APPROVAL)
+            <div class="form-action__button--approved">
+                <span>申請済み</span>
+            </div>
+        @elseif ($attendance && $stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::PENDING)
+            @if ($isAdmin)
+                <button type="submit" class="form-action__button">承認</button>
+            @else
                 <div class="pending-notice">
                     <p>* 承認待ちのため申請できません</p>
                 </div>
-            @elseif ($attendance && $stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::APPROVAL && $isAdmin)
-                <div class="form-action__button--approved">
-                    <span>申請済み</span>
-                </div>
-            @else
-                <button class="form-action__button" type="submit">{{ $isAdmin ? '修正' : '申請' }}</button>
             @endif
+        @else
+            <button class="form-action__button" type="submit">{{ $isAdmin ? '修正' : '申請' }}</button>
         @endif
         </div>
     </form>
