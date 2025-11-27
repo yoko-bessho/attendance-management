@@ -110,19 +110,22 @@ class AdminAttendanceTest extends TestCase
      */
     public function admin_can_view_next_day_of_attendanceInformation()
     {
-        $testNow = Carbon::create(2025, 11, 10);
-        Carbon::setTestNow($testNow);
+        //  Seederが作成する日付範囲内の日付を基準にする
+        $baseDate = Carbon::create(2025, 11, 13);
+        Carbon::setTestNow($baseDate);
 
-        $nextDay = Carbon::tomorrow()->format('Y-m-d');
+        $nextDay = Carbon::tomorrow();
+        $nextDayString = $nextDay->format('Y-m-d');
 
-        $attendance = Attendance::firstWhere('worked_at', $nextDay);
+        $attendance = Attendance::whereDate('worked_at', $nextDay)->first();
+        $this->assertNotNull($attendance);
 
         $this->actingAs($this->admin, 'admin');
-
-        $response = $this->get(route('admin.attendance.list',['date' => $nextDay]));
+        $response = $this->get(route('admin.attendance.list', ['date' => $nextDayString]));
 
         $response->assertStatus(200);
-        $response->assertSee($nextDay);
+        $response->assertSee($nextDayString);
+        $response->assertSee($attendance->user->name);
         $response->assertSee($attendance->start_time->format('H:i'));
         $response->assertSee($attendance->end_time->format('H:i'));
 

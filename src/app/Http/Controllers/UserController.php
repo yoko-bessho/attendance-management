@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function staffList()
     {
-        $users = User::all();
+        $users = User::where('role', 'staff')->get();
 
         return view('admin.staff-list', compact('users'));
     }
