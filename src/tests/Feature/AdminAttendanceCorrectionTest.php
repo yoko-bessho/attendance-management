@@ -34,10 +34,9 @@ class AdminAttendanceCorrectionTest extends TestCase
         $testNow = Carbon::create(2025, 11, 15);
         Carbon::setTestNow($testNow);
 
-        $targetUser = User::find(2); // 一般ユーザー
+        $targetUser = User::where('email','general1@example.com')->first();
         $targetDate = Carbon::yesterday();
         $targetDateString = $targetDate->format('Y-m-d');
-
         $attendance = Attendance::where('user_id', $targetUser->id)
                                 ->whereDate('worked_at', $targetDate)
                                 ->first();
