@@ -135,6 +135,7 @@ class StampCorrectionRequestController extends Controller
             'actionRoute' => route('admin.approval', [
                 'attendance_correct_request_id' => $stampRequest->id,
             ]),
+            'isApprovalForm' => true,
         ], $display));
 
     }

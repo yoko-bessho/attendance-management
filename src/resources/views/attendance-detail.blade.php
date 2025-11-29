@@ -44,7 +44,7 @@
         <table class="attendance-detail-table">
             <tr class="attendance-detail-table__row">
                 <th><label>名前</label></th>
-                <td>{{ $targetUser->name }}</td>
+                <td>　　{{ $targetUser->name }}</td>
             </tr>
 
             <tr class="attendance-detail-table__row">
@@ -127,22 +127,26 @@
         </table>
 
         <div class="form-action">
-        @if ($attendance && $stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::APPROVAL)
+        @if ($stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::APPROVAL)
             <div class="form-action__button--approved">
-                <span>申請済み</span>
+                <span>承認済み</span>
             </div>
-        @elseif ($attendance && $stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::PENDING)
-            @if ($isAdmin)
+
+        @elseif ($stampRequest?->status === \App\Enums\StampCorrectionRequestsStatus::PENDING)
+
+            @if (!empty($isApprovalForm))
                 <button type="submit" class="form-action__button">承認</button>
             @else
                 <div class="pending-notice">
-                    <p>* 承認待ちのため申請できません</p>
+                    <p>* 承認待ちのため修正はできません</p>
                 </div>
             @endif
+
         @else
-            <button class="form-action__button" type="submit">{{ $isAdmin ? '修正' : '申請' }}</button>
+            <button class="form-action__button" type="submit">修正</button>
         @endif
         </div>
+
     </form>
     @if (session('success'))
         <p>{{ session('success') }}</p>
