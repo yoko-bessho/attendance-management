@@ -206,7 +206,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .attendance-detail-table__row td {
     padding-left: 10%;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 15px;
     color:#000;
 }
 
