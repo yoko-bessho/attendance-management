@@ -76,8 +76,8 @@
     </table>
     @if (Auth::user()->role === 'admin')
     <div class="export-form">
-        <form action="{{ route('admin.attendance.export', ['user' => $targetUser, 'date' => $month]) }}" method="post">
-            @csrf
+        <form action="{{ route('admin.attendance.export', ['user' => $targetUser->id ]) }}" method="get">
+            <input type="hidden" name="month" value="{{ $month->format('Y-m') }}">
             <input class="export__button" type="submit" value="CSV出力">
         </form>
     </div>
