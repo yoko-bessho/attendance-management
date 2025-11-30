@@ -27,10 +27,6 @@ class AttendanceCorrectionTest extends TestCase
     /**
      * @test
      *出勤時間が退勤時間より後になっている場合、エラーメッセージが表示される
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 出勤時間を退勤時間より後に設定する
-     * 4. 保存処理をする
      */
     public function attendanceCorrection_startTimeAfterEndTime_errorMessageDisplayed()
     {
@@ -61,10 +57,6 @@ class AttendanceCorrectionTest extends TestCase
     /**
      * @test
      * 休憩開始時間が退勤時間より後になっている場合、エラーメッセージが表示される
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 休憩開始時間を退勤時間より後に設定する
-     * 4. 保存処理をする
      */
     public function attendanceCorrection_breakStartTimeAfterAttendanceEndTime_errorMessageDisplayed()
     {
@@ -101,10 +93,6 @@ class AttendanceCorrectionTest extends TestCase
     /**
      * @test
      * 休憩終了時間が退勤時間より後になっている場合、エラーメッセージが表示される
-     * "1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 休憩終了時間を退勤時間より後に設定する
-     * 4. 保存処理をする
      */
     public function attendanceCorrection_breakEntTimeAfterAttendanceEndTime_errorMessageDisplayed()
     {
@@ -141,9 +129,6 @@ class AttendanceCorrectionTest extends TestCase
     /**
      * @test
      * 備考欄が未入力の場合のエラーメッセージが表示される
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 備考欄を未入力のまま保存処理をする
      */
     public function attendanceCorrection_reason_errorMessageDisplayed()
     {
@@ -172,9 +157,6 @@ class AttendanceCorrectionTest extends TestCase
     /**
      * @test
      * 修正申請処理が実行される
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細を修正し保存処理をする
-     * 3. 管理者ユーザーで承認画面と申請一覧画面を確認する
      */
 
     public function correctionRequest_processing_is_executed()
@@ -210,16 +192,12 @@ class AttendanceCorrectionTest extends TestCase
     /**
      * @test
      * 「承認待ち」にログインユーザーが行った申請が全て表示されていること
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細を修正し保存処理をする
-     * 3. 申請一覧画面を確認する
      */
     public function allRequests_submitted_by_logginUsers_are_displayed_pending()
     {
         $this->actingAs($this->user);
         $attendance = $this->user->attendances()->latest()->first();
         $date = $attendance->worked_at->format('Y-m-d');
-        $break = $attendance->breakTimes()->first();
 
         $correctionData = [
             'start_time' => '09:30',
@@ -235,23 +213,18 @@ class AttendanceCorrectionTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertSee('承認待ち');
-        $response->assertSee($date);
+        $response->assertSee(Carbon::parse($date)->format('Y/m/d'));
         $response->assertSee($this->user->name);
         $response->assertSee('テスト申請理由');
     }
 
-    // /**
-    //  * @test
-    //  * 「承認済み」に管理者が承認した修正申請が全て表示されている
-    //  * 1. 勤怠情報が登録されたユーザーにログインをする
-    //  * 2. 勤怠詳細を修正し保存処理をする
-    //  * 3. 申請一覧画面を開く
-    //  * 4. 管理者が承認した修正申請が全て表示されていることを確認
-    //  */
+    /**
+     * @test
+     * 「承認済み」に管理者が承認した修正申請が全て表示されている
+     */
     public function allRequests_approved_by_admin_are_displayed_under_approval()
     {
         $this->actingAs($this->user);
-
         $attendance = $this->user->attendances()->latest()->first();
         $date = $attendance->worked_at->format('Y-m-d');
         $correctionData = [
@@ -263,24 +236,26 @@ class AttendanceCorrectionTest extends TestCase
         $this->post($requestUrl, $correctionData);
 
         $stampRequest = StampCorrectionRequest::latest()->first();
+        $this->assertNotNull($stampRequest);
+
+        // --- 管理者による承認 ---
         $adminUser = User::where('email', 'admin@example.com')->first();
-
-        $this->actingAs($adminUser);
-
+        $this->actingAs($adminUser, 'admin');
         $approvalUrl = route('admin.approval', ['attendance_correct_request_id' => $stampRequest->id]);
-        $this->patch($approvalUrl, $correctionData);
+        $response = $this->patch($approvalUrl);
 
-        $stampRequest->refresh();
-        $this->assertEquals('approval', $stampRequest->status->value);
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect();
+        $this->assertEquals('approval', $stampRequest->fresh()->status->value, "Failed to update status to 'approval'.");
 
+        // --- 一般ユーザーによる確認 ---
         $this->actingAs($this->user);
-
-        $requestListlUrl = route('request.list');
-        $response = $this->get($requestListlUrl);
+        $requestListUrl = route('request.list', ['tab' => 'approval']);
+        $response = $this->get($requestListUrl);
 
         $response->assertStatus(200);
         $response->assertSee('承認済み');
-        $response->assertSee($date);
+        $response->assertSee(Carbon::parse($date)->format('Y/m/d'));
         $response->assertSee($this->user->name);
         $response->assertSee('テスト申請理由');
     }
@@ -288,10 +263,6 @@ class AttendanceCorrectionTest extends TestCase
     /**
      * @test
      * 各申請の「詳細」を押下すると勤怠詳細画面に遷移する
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細を修正し保存処理をする
-     * 3. 申請一覧画面を開く
-     * 4. 「詳細」ボタンを押す
      */
     public function clicking_DetailsButton_take_you_to_attendance_detailScreen()
     {
