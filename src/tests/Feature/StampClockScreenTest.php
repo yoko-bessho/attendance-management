@@ -6,12 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Attendance;
-use Carbon\Carbon;
-use Database\Seeders\OrderStatusSeeder;
-use Database\Seeders\TransactionStatusSeeder;
 use Database\Seeders\DatabaseSeeder;
-use Database\Seeders\UsersTableSeeder;
 
 class StampClockScreenTest extends TestCase
 {
@@ -29,8 +24,6 @@ class StampClockScreenTest extends TestCase
     /**
      * @test
      * 現在の日時情報がUIと同じ形式で出力されている
-     * 1. 勤怠打刻画面を開く
-     * 2. 画面に表示されている日時情報を確認する
      */
     public function stampClock_currentDateTime_displayedInUISameFormat()
     {
@@ -50,9 +43,6 @@ class StampClockScreenTest extends TestCase
     /**
      * @test
      * 勤務外の場合、勤怠ステータスが正しく表示される
-     * 1. ステータスが勤務外のユーザーにログインする
-     * 2. 勤怠打刻画面を開く
-     * 3. 画面に表示されているステータスを確認する
      */
     public function stampClock_offDutyStatus_displayedCorrectly()
     {
@@ -67,9 +57,6 @@ class StampClockScreenTest extends TestCase
     /**
      * @test
      * 出勤中の場合、勤怠ステータスが正しく表示される
-     * 1. ステータスが出勤中のユーザーにログインする
-     * 2. 勤怠打刻画面を開く
-     * 3. 画面に表示されているステータスを確認する
      */
     public function stampClock_onDutyStatus_displayedCorrectly()
     {
@@ -85,9 +72,6 @@ class StampClockScreenTest extends TestCase
     /**
      * @test
      * 休憩中の場合、勤怠ステータスが正しく表示される
-     * 1. ステータスが休憩中のユーザーにログインする
-     * 2. 勤怠打刻画面を開く
-     * 3. 画面に表示されているステータスを確認する
      */
     public function stampClock_onBreakStatus_displayedCorrectly()
     {
@@ -102,9 +86,6 @@ class StampClockScreenTest extends TestCase
     /**
      * @test
      * 退勤済の場合、勤怠ステータスが正しく表示される
-     * 1. ステータスが退勤済のユーザーにログインする
-     * 2. 勤怠打刻画面を開く
-     * 3. 画面に表示されているステータスを確認する
      */
     public function stampClock_offDutyCompletedStatus_displayedCorrectly()
     {

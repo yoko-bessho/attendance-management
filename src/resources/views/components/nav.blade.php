@@ -18,7 +18,7 @@
         </li>
     </ul>
     @else
-        <ul class="header-nav">
+    <ul class="header-nav">
         <li class="header-nav__item">
             <a class="header-nav__link" href="{{ route('attendance') }}">勤怠</a>
         </li>

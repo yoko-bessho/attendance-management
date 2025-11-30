@@ -98,6 +98,7 @@
                     @endforeach
                 </td>
             </tr>
+
             <tr class="attendance-detail-table__row">
                 <th><label>休憩2</label></th>
                 <td>

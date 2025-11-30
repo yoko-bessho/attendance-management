@@ -16,6 +16,7 @@
     <div class="attendance__header">
         <h1 class="header__title">スタッフ一覧</h1>
     </div>
+
     <table class="attendance-table">
         <thead>
             <tr class="attendance-table__row">

@@ -16,14 +16,18 @@
     <div class="attendance__header">
         <h1 class="header__title">{{ $date->format('Y年m月d日') }}の勤怠</h1>
     </div>
+
     <div class="day-selector">
         <a href="{{ route('admin.attendance.list', ['date' => $previousDay]) }}" class="day-btn"><img class="previous-arrow" src="{{ asset('img/arrow.png') }}" alt="arrow"> 前日</a>
+
         <div class="day-display-wrapper">
             <input type="date" class="day-input" name="day" value="{{ $date->format('Y-m-d') }}">
             <span class="formatted-day">{{ $date->format('Y/m/d') }}</span>
         </div>
+
         <a href="{{ route('admin.attendance.list', ['date' => $nextDay]) }}" class="day-btn">翌日 <img class="next-arrow" src="{{ asset('img/arrow.png') }}" alt="arrow"></a>
     </div>
+
     <table class="attendance-table">
         <thead>
             <tr class="attendance-table__row">

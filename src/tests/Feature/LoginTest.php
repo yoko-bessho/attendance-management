@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class LoginTest extends TestCase
@@ -21,9 +19,6 @@ class LoginTest extends TestCase
     /**
      * @test
      * メールアドレスが未入力の場合、バリデーションメッセージが表示される（一般ユーザー）
-     * 1. ユーザーを登録する(seedで登録済み)
-     * 2. メールアドレス以外のユーザー情報を入力する
-     * 3. ログインの処理を行う
      */
     public function login_userEmail_validationMessage()
     {
@@ -39,9 +34,6 @@ class LoginTest extends TestCase
     /**
      * @test
      * パスワードが未入力の場合、バリデーションメッセージが表示される（一般ユーザー）
-     * 1. ユーザーを登録する
-     * 2. パスワード以外のユーザー情報を入力する
-     * 3. ログインの処理を行う
      */
     public function login_userPassword_validationMessage()
     {
@@ -57,9 +49,6 @@ class LoginTest extends TestCase
     /**
      * @test
      * 登録内容と一致しない場合、バリデーションメッセージが表示される（一般ユーザー）
-     * 1. ユーザーを登録する
-     * 2. 誤ったメールアドレスのユーザー情報を入力する
-     * 3. ログインの処理を行う
      */
     public function login_user_validationMessage()
     {
@@ -74,10 +63,6 @@ class LoginTest extends TestCase
 
     /**
      * @test
-     * メールアドレスが未入力の場合、バリデーションメッセージが表示される（管理者）
-     * 1. ユーザーを登録する（seedで登録済み）
-     * 2. メールアドレス以外のユーザー情報を入力する
-     * 3. ログインの処理を行う
      */
     public function login_adminEmail_validationMessage()
     {
@@ -93,9 +78,6 @@ class LoginTest extends TestCase
     /**
      * @test
      * パスワードが未入力の場合、バリデーションメッセージが表示される（管理者）
-     * 1. ユーザーを登録する
-     * 2. パスワード以外のユーザー情報を入力する
-     * 3. ログインの処理を行う
      */
     public function login_adminPassword_validationMessage()
     {
@@ -111,9 +93,6 @@ class LoginTest extends TestCase
     /**
      * @test
      * 登録内容と一致しない場合、バリデーションメッセージが表示される（管理者）
-     * 1. ユーザーを登録する
-     * 2. 誤ったメールアドレスのユーザー情報を入力する
-     * 3. ログインの処理を行う
      */
     public function login_admin_validationMessage()
     {

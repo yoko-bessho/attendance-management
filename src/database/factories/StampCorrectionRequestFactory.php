@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\StampCorrectionRequest;
-use App\Models\User;
 use App\Models\Attendance;
 use App\Enums\StampCorrectionRequestsStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;

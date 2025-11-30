@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Attendance;
 use Database\Seeders\DatabaseSeeder;
 use Carbon\Carbon;
 
@@ -27,9 +26,6 @@ class AcquireDetailAttendanceInformationTest extends TestCase
     /**
      * @test
      * 勤怠詳細画面の「名前」がログインユーザーの氏名になっている
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 名前欄を確認する
      */
     public function attendanceDetail_nameIsLoginUserName()
     {
@@ -47,9 +43,6 @@ class AcquireDetailAttendanceInformationTest extends TestCase
     /**
      * @test
      * 勤怠詳細画面の「日付」が選択した日付になっている
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 日付欄を確認する
      */
     public function attendanceDetail_dateIsSelectedDate()
     {
@@ -68,9 +61,6 @@ class AcquireDetailAttendanceInformationTest extends TestCase
     /**
      * @test
      * 「出勤・退勤」にて記されている時間がログインユーザーの打刻と一致している
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 出勤・退勤欄を確認する
      */
     public function attendanceDetail_startEndTimeIsLoginUserStampTime()
     {
@@ -89,9 +79,6 @@ class AcquireDetailAttendanceInformationTest extends TestCase
     /**
      * @test
      * 「休憩」にて記されている時間がログインユーザーの打刻と一致している
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠詳細ページを開く
-     * 3. 休憩欄を確認する
      */
     public function attendanceDetail_breakTimeIsLoginUserStampTime()
     {

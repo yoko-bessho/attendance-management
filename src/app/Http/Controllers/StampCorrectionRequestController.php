@@ -6,13 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\StampCorrectionRequest;
-use App\Models\User;
 use Carbon\Carbon;
-use App\Services\AttendanceDisplayService;
 use App\Enums\StampCorrectionRequestsStatus;
 use App\Http\Requests\AttendanceCorrectionRequest;
-use App\Models\BreakTime;
-use Illuminate\Support\Optional;
 
 class StampCorrectionRequestController extends Controller
 {
@@ -113,6 +109,7 @@ class StampCorrectionRequestController extends Controller
         return view('request-list', compact('requests', 'tab'));
     }
 
+
     public function approvalForm($attendance_correct_request_id)
     {
         $stampRequest = StampCorrectionRequest::with('user', 'attendance.breakTimes')->find($attendance_correct_request_id);
@@ -139,6 +136,7 @@ class StampCorrectionRequestController extends Controller
         ], $display));
 
     }
+
 
     public function approval($attendance_correct_request_id)
     {

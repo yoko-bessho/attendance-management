@@ -8,9 +8,6 @@ use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Attendance;
-use App\Models\StampCorrectionRequest;
-use App\Enums\StampCorrectionRequestsStatus;
-use PhpParser\Node\Stmt\Break_;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceController extends Controller
@@ -38,6 +35,7 @@ class AttendanceController extends Controller
 
         return view('admin.attendance-list', compact('staffs', 'date', 'previousDay', 'nextDay'));
     }
+
 
     public function export(Request $request, $userId)
     {

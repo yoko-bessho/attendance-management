@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 
-use App\Enums\StampCorrectionRequestsStatus;
-use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\StampCorrectionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\Carbon;
-use Facade\FlareClient\View;
 
 class AttendanceController extends Controller
 {
@@ -167,7 +163,7 @@ class AttendanceController extends Controller
             ->where('request_date', $date)
             ->latest()
             ->first();
-        
+
         $display = app(\App\Services\AttendanceDisplayService::class)
             ->build($attendance, $stampRequest);
 

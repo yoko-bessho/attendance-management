@@ -4,15 +4,12 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Database\Seeders\DatabaseSeeder;
-use Dflydev\DotAccessData\Data;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 
@@ -29,9 +26,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      * 名前が未入力の場合、バリデーションメッセージが表示される
-     *
-     *  1. 名前以外のユーザー情報を入力する
-     *  2. 会員登録の処理を行う
      */
     public function register_user_validate_name()
     {
@@ -49,9 +43,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      *  メールアドレスが未入力の場合、バリデーションメッセージが表示される
-     *
-     * 1. メールアドレス以外のユーザー情報を入力する
-     * 2. 会員登録の処理を行う
      */
     public function register_user_validate_email()
     {
@@ -69,9 +60,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      * パスワードが8文字未満の場合、バリデーションメッセージが表示される
-     *
-     * 1. パスワードを8文字未満にし、ユーザー情報を入力する
-     * 2. 会員登録の処理を行う
      */
     public function register_user_validate_password_under8()
     {
@@ -89,9 +77,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      * パスワードが一致しない場合、バリデーションメッセージが表示される
-     *
-     * 1. 確認用のパスワードとパスワードを一致させず、ユーザー情報を入力する
-     * 2. 会員登録の処理を行う"
      */
     public function register_user_validate_confirm_password()
     {
@@ -109,9 +94,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      * パスワードが未入力の場合、バリデーションメッセージが表示される
-     *
-     * 1. パスワード以外のユーザー情報を入力する
-     * 2. 会員登録の処理を行う"
      */
     public function register_user_validate_password()
     {
@@ -129,9 +111,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      * 会員登録後、認証メールが送信される
-     *
-     * 1. 会員登録をする
-     * 2. 認証メールを送信する
      */
     public function a_verification_email_is_sent_upon_registration()
     {
@@ -157,10 +136,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      * メール認証誘導画面で「認証はこちらから」ボタンを押下するとメール認証サイトに遷移する
-     *
-     * 1. メール認証導線画面を表示する (URL直接アクセスで代替)
-     * 2. 「認証はこちらから」ボタンを押下（認証URLを直接生成してアクセス）
-     * 3. メール認証サイトを表示する（認証後のリダイレクト先を確認）
      */
 
     public function user_can_verify_their_email_by_clicking_the_verification_link()
@@ -190,9 +165,6 @@ class RegisterTest extends TestCase
     /**
      * @test
      * メール認証サイトのメール認証を完了すると、勤怠登録画面に遷移する
-     *
-     * 1. メール認証を完了する
-     * 2. 勤怠登録画面を表示する"
      */
     public function verified_user_is_redirected_to_the_attendance_management_screen()
     {

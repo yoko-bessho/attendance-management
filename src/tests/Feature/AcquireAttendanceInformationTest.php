@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Attendance;
 use Carbon\Carbon;
 use Database\Seeders\DatabaseSeeder;
 
@@ -26,9 +25,6 @@ class AcquireAttendanceInformationTest extends TestCase
     /**
      * @test
      * 自分が行った勤怠情報が全て表示されている
-     * 1. 勤怠情報が登録されたユーザーにログインする
-     * 2. 勤怠一覧ページを開く
-     * 3. 自分の勤怠情報がすべて表示されていることを確認する
      */
     public function attendanceList_allAttendanceInformationDisplayed()
     {
@@ -69,8 +65,6 @@ class AcquireAttendanceInformationTest extends TestCase
     /**
      * @test
      * 勤怠一覧画面に遷移した際に現在の月が表示される
-     * 1. ユーザーにログインをする
-     * 2. 勤怠一覧ページを開く
      */
     public function attendanceList_currentMonthDisplayedOnScreenTransition()
     {
@@ -86,9 +80,6 @@ class AcquireAttendanceInformationTest extends TestCase
     /**
      * @test
      * 「前月」を押下した時に表示月の前月の情報が表示される
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠一覧ページを開く
-     * 3. 「前月」ボタンを押す
      */
     public function attendanceList_previousMonthDisplayedWhenPreviousMonthButtonPressed()
     {
@@ -123,9 +114,6 @@ class AcquireAttendanceInformationTest extends TestCase
     /**
      * @test
      * 「翌月」を押下した時に表示月の翌月の情報が表示される
-     * "1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠一覧ページを開く
-     * 3. 「翌月」ボタンを押す
     */
     public function attendanceList_nextMonthDisplayedWhenNextMonthButtonPressed()
     {
@@ -160,9 +148,6 @@ class AcquireAttendanceInformationTest extends TestCase
     /**
      * @test
      * 「詳細」を押下すると、その日の勤怠詳細画面に遷移する
-     * 1. 勤怠情報が登録されたユーザーにログインをする
-     * 2. 勤怠一覧ページを開く
-     * 3. 「詳細」ボタンを押下する
      */
     public function attendanceList_navigateToAttendanceDetailWhenDetailButtonPressed()
     {

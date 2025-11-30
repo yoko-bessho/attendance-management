@@ -41,6 +41,7 @@
             <a href="{{ route('attendance.list', ['month' => $nextMonth->format('Y-m')]) }}" class="month-btn">翌月 <img class="next-arrow" src="{{ asset('img/arrow.png') }}" alt="arrow"></a>
         @endif
     </div>
+
     <table class="attendance-table">
         <thead>
             <tr class="attendance-table__row">
@@ -52,6 +53,7 @@
                 <th>詳細</th>
             </tr>
         </thead>
+
         <tbody>
             @foreach($dates as $date)
                 @php
@@ -74,6 +76,7 @@
             @endforeach
         </tbody>
     </table>
+
     @if (Auth::user()->role === 'admin')
     <div class="export-form">
         <form action="{{ route('admin.attendance.export', ['user' => $targetUser->id ]) }}" method="get">
