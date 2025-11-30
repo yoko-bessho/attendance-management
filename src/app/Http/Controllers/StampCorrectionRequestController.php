@@ -157,23 +157,23 @@ class StampCorrectionRequestController extends Controller
 
         if ($stampRequest->revised_breaks) {
             $breaks = json_decode($stampRequest->revised_breaks, true);
+            $attendance = $stampRequest->attendance;
 
-            foreach ($breaks as $break) {
-                $breakData = [
-                    'start_time' => Carbon::parse("{$stampRequest->request_date} {$break['start_time']}"),
-                    'end_time' => Carbon::parse("{$stampRequest->request_date} {$break['end_time']}"),
-                ];
+            if ($attendance) {
+                foreach ($breaks as $break) {
+                    $breakId = data_get($break, 'id');
+                    $breakData = [
+                        'start_time' => Carbon::parse("{$stampRequest->request_date} {$break['start_time']}"),
+                        'end_time' => Carbon::parse("{$stampRequest->request_date} {$break['end_time']}"),
+                    ];
 
-                BreakTime::updateOrCreate(
-                    [
-                        'attendance_id' => optional($stampRequest->attendance)->id,
-                        'start_time' => $breakData['start_time'],
-                        'end_time' => $breakData['end_time'],
-                    ],
-                    $breakData
-                );
+                    if ($breakId) {
+                        $attendance->breakTimes()->where('id', $breakId)->update($breakData);
+                    } else {
+                        $attendance->breakTimes()->create($breakData);
+                    }
+                }
             }
-
         }
         $stampRequest->status = StampCorrectionRequestsStatus::APPROVAL;
         $stampRequest->save();
