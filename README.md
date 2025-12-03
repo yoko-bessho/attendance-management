@@ -16,8 +16,25 @@
    mysql:
       image: mysql:8.0.26
       platform: linux/x86_64   //(この文追加)
-
    ```
+
+4. 作成された .envへ以下の環境変数と管理者ユーザー情報を追加してください
+   ```
+   DB_HOST=mysql
+   DB_PORT=3306
+   DB_DATABASE=laravel_db
+   DB_USERNAME=laravel_user
+   DB_PASSWORD=laravel_pass
+
+   管理者用ユーザ
+	ADMIN_EMAIL=				#メールアドレス"
+   ADMIN_PASSWORD=		   #パスワード"
+   ```
+
+5. .envの編集後、以下を実行
+```
+make after-env
+```
 ## メール認証設定
 mailtrapというツールを使用しています。
 以下のリンクから会員登録をしてください。
