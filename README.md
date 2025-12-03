@@ -32,9 +32,9 @@
    ```
 
 5. .envの編集後、以下を実行
-```
-make after-env
-```
+   ```
+   make after-env
+   ```
 ## メール認証設定
 mailtrapというツールを使用しています。
 以下のリンクから会員登録をしてください。
@@ -44,12 +44,11 @@ https://mailtrap.io/
 
 2. 環境変数とパスワードをコピーし、.env へ貼り付ける。
    デフォルト部分はコメントアウトか削除する。
-   MAIL_FROM_ADDRESSは任意のメールアドレスを入力する。
 
 3. ```
-   php artisan config:clear
+   docker compose exec php php artisan config:clear
    ```
-メール認証テストはmailtrapに届いたメールの認証ボタンを押して認証してください。
+   メール認証テストはmailtrapに届いたメールの認証ボタンを押して認証してください。
 
 
 ## テーブル仕様
@@ -115,16 +114,24 @@ name:管理者
 email: admin@example.com
 password: adminpassword
 name: 一般ユーザ
-email: general1@gmail.com
+email: general1@example.com
 password: password
+
 ## PHPUnitを使用したテストは以下を実行してください
 **1. テスト用データベースの作成**
 ```
 docker-compose exec mysql bash
 mysql -u root -p
 //パスワードはrootと入力
-create database test_database;
+create database demo_test;
 ```
+
+.env.testingのAPP_KEY=を空にする
+```
+docker compose exec php bash
+php artisan config:clear
+```
+
 **2.テスト実行**
 ```
 docker-compose exec php bash
