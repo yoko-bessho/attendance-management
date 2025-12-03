@@ -2,7 +2,9 @@
 
 ## 環境構築
 
-1.  ```git clone git@github.com:yoko-bessho/attendance-management.git```
+1. ```
+   git clone git@github.com:yoko-bessho/attendance-management.git
+   ```
 2. DockerDesktopを立ち上げる。
 3. プロジェクト直下で以下のコマンドを実行する。
    ```
@@ -27,7 +29,9 @@ https://mailtrap.io/
    デフォルト部分はコメントアウトか削除する。
    MAIL_FROM_ADDRESSは任意のメールアドレスを入力する。
 
-3. ```php artisan config:clear```
+3. ```
+   php artisan config:clear
+   ```
 メール認証テストはmailtrapに届いたメールの認証ボタンを押して認証してください。
 
 
@@ -87,23 +91,25 @@ https://mailtrap.io/
 | updated_at         | timestamp       |    |        |          |                 |
 
 ## ER図
-![ER図](er.drawio.svg)
+![ER図](ER.png)
 
 ## テストアカウント
 name:管理者
-email:admin@example.com
-password:adminpassword
+email: admin@example.com
+password: adminpassword
 name: 一般ユーザ
 email: general1@gmail.com
 password: password
-## PHPUnitを使用したテストについて
+## PHPUnitを使用したテストは以下を実行してください
+**1. テスト用データベースの作成**
 ```
-//テスト用データベースの作成
 docker-compose exec mysql bash
 mysql -u root -p
 //パスワードはrootと入力
 create database test_database;
-
+```
+**2.テスト実行**
+```
 docker-compose exec php bash
 php artisan migrate:fresh --env=testing
 ./vendor/bin/phpunit
