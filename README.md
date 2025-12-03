@@ -129,12 +129,16 @@ create database demo_test;
 .env.testingのAPP_KEY=を空にする
 ```
 docker compose exec php bash
+```
+```
+php artisan key:generate --env=testing
+```
+```
 php artisan config:clear
 ```
 
 **2.テスト実行**
 ```
-docker-compose exec php bash
 php artisan migrate:fresh --env=testing
 ./vendor/bin/phpunit
 ```
