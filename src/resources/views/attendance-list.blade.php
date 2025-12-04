@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let baseUrl = "{{ url()->current() }}";
 
         @if (Auth::user()->role === 'admin' && isset($targetUser))
-            // 管理者 → staff.list には id が必要
             window.location.href = baseUrl + "?month=" + selectedMonth + "&id={{ $targetUser->id }}";
         @else
             window.location.href = baseUrl + "?month=" + selectedMonth;
