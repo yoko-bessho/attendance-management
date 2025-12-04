@@ -86,5 +86,27 @@
     </div>
     @endif
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const monthPicker = document.querySelector('.month-input');
+    if (!monthPicker) return;
+
+    monthPicker.addEventListener('change', function () {
+        const selectedMonth = this.value;
+        if (!selectedMonth) return;
+
+        let baseUrl = "{{ url()->current() }}";
+
+        @if (Auth::user()->role === 'admin' && isset($targetUser))
+            // 管理者 → staff.list には id が必要
+            window.location.href = baseUrl + "?month=" + selectedMonth + "&id={{ $targetUser->id }}";
+        @else
+            window.location.href = baseUrl + "?month=" + selectedMonth;
+        @endif
+    });
+});
+</script>
+
 @endsection
 
