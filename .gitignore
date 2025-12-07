@@ -10,6 +10,7 @@
 # Environment files
 .env
 .env.backup
+.env.testing
 
 # Docker関連
 docker/mysql/data/

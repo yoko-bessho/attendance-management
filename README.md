@@ -126,7 +126,12 @@ mysql -u root -p
 create database demo_test;
 ```
 
-.env.testingのAPP_KEY=を空にする
+**2. env.testingを作成**
+.env.testing.example を .env.testing にコピーしkey生成
+```
+cp .env.testing.example .env.testing
+```
+
 ```
 docker compose exec php bash
 ```
