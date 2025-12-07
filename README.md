@@ -110,12 +110,12 @@ https://mailtrap.io/
 ![ER図](ER.png)
 
 ## テストアカウント
-name:管理者
-email: admin@example.com
-password: adminpassword
-name: 一般ユーザ
-email: general1@example.com
-password: password
+- 管理者
+  - email: admin@example.com
+  - password: adminpassword
+- 一般ユーザ
+  - email: general1@example.com
+  - password: password
 
 ## PHPUnitを使用したテストは以下を実行してください
 **1. テスト用データベースの作成**
@@ -157,6 +157,6 @@ php artisan migrate:fresh --env=testing
 
 ### URL
 
-・ 開発環境：http://localhost/
-・ phpMyadmin：http://localhost:8080/
+- 開発環境：http://localhost/
+- phpMyadmin：http://localhost:8080/
 
